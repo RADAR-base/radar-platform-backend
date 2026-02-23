@@ -1,6 +1,6 @@
 # Platform Backend
 
-A microservices-based backend platform for HealthRadar built with Kotlin and Jersey.
+A microservices-based backend platform for RADAR-base built with Kotlin and Jersey.
 
 ## Project Structure
 
