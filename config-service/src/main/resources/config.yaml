@@ -1,0 +1,41 @@
+server:
+  baseUri: "http://0.0.0.0:8083"
+
+logging:
+  level: "INFO"
+  file: "logs/config-service.log"
+  pattern: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+providers:
+  github:
+    enabled: true
+    baseUrl: "https://raw.githubusercontent.com/RADAR-base/study-definitions/main"
+    # For writes (optional; defaults match baseUrl)
+    owner: "RADAR-base"
+    repo: "study-definitions"
+    branch: "main"
+    token: ""
+    # Questionnaire bodies go to separate aRMT definitions repo
+    questionnaireRepoOwner: "RADAR-base"
+    questionnaireRepo: "RADAR-REDCap-aRMT-Definitions"
+    questionnaireRepoBranch: "master"
+    # Optional: separate repo for protocol (when set, protocol is read/written here)
+    protocolRepoOwner: "RADAR-base"
+    protocolRepo: "RADAR-aRMT-protocols"
+    protocolRepoBranch: "master"
+    # Optional: separate repo for enrolment (landingpage.json + protocol.json per project)
+    enrolmentRepoOwner: "RADAR-base"
+    enrolmentRepo: "radar-self-enrolment-definitions"
+    enrolmentRepoBranch: "main"
+  appConfig:
+    enabled: false
+    basePath: "/etc/RADAR-base/study-config"
+  db:
+    enabled: false
+    jdbcUrl: ""
+    username: ""
+    password: ""
+  # Order of providers for read and write (first enabled writable provider is used for writes)
+  order: ["github", "appConfig", "db"]
+
+

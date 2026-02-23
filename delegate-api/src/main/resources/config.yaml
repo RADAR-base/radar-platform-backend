@@ -1,0 +1,25 @@
+auth:
+  managementPortal:
+    url: http://management-portal:8080
+  resourceName: res_ManagementPortal
+  issuer: http://hydra-public:4444
+  publicKeyUrls: [
+    "http://hydra-public:4444/.well-known/jwks.json"
+  ]
+
+userService:
+  baseUrl: http://localhost:8081/user-service
+
+participantService:
+  baseUrl: http://localhost:8081/user-service
+
+projectService:
+  baseUrl: http://localhost:8082/project-service
+
+configService:
+  baseUrl: http://localhost:8083/config-service
+
+dataSourcesService:
+  baseUrl: http://localhost:8084/data-sources-service
+
+
