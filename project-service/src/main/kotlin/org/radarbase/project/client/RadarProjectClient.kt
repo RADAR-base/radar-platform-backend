@@ -17,6 +17,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.radarbase.core.model.Group
+import org.radarbase.core.util.KtorClientFactory
 import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.project.config.ProjectServiceConfiguration
 import org.radarbase.project.model.CreateGroupRequest

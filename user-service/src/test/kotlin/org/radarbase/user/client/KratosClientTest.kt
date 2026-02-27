@@ -17,8 +17,9 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.radarbase.core.util.KtorClientFactory
+import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.user.config.UserServiceConfig
-import org.radarbase.user.service.ServiceTokenProvider
 
 class KratosClientTest {
     private lateinit var config: UserServiceConfig
@@ -96,8 +97,7 @@ class KratosClientTest {
             }
 
         mockClient = HttpClient(mockEngine)
-        ktorClientFactory =
-            mockk<KtorClientFactory>().apply {
+        ktorClientFactory = mockk<KtorClientFactory>().apply {
                 every { createClient(any(), any(), any()) } returns mockClient
             }
 
@@ -106,7 +106,7 @@ class KratosClientTest {
                 coEvery { getToken() } returns "test-token"
             }
 
-        client = KratosClient(config, ktorClientFactory, tokenProvider)
+        client = KratosClient(config, tokenProvider, ktorClientFactory)
     }
 
     @Test
@@ -166,7 +166,7 @@ class KratosClientTest {
                     coEvery { getToken() } returns "test-token"
                 }
 
-            val client = KratosClient(config, ktorClientFactory, testTokenProvider)
+            val client = KratosClient(config, testTokenProvider, ktorClientFactory)
             val user = client.getIdentity("non-existent")
 
             assertNull(user)

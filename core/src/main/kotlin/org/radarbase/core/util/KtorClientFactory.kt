@@ -1,4 +1,4 @@
-package org.radarbase.project.client
+package org.radarbase.core.util
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -51,3 +51,4 @@ class KtorClientFactory {
             }
         }
 }
+

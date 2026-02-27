@@ -6,9 +6,9 @@ import jakarta.inject.Singleton
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.radarbase.core.util.KtorClientFactory
 import org.radarbase.jersey.filter.Filters
 import org.radarbase.user.client.KratosClient
-import org.radarbase.user.client.KtorClientFactory
 import org.radarbase.user.client.RadarClient
 import org.radarbase.user.config.UserServiceConfig
 import org.radarbase.user.service.UserService
