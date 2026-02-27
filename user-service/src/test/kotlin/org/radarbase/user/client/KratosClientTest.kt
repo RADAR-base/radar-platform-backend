@@ -45,8 +45,8 @@ class KratosClientTest {
             MockEngine { _: HttpRequestData ->
                 respond(
                     content =
-                        ByteReadChannel(
-                            """[
+                    ByteReadChannel(
+                        """[
                     {
                         "id": "test-id",
                         "schemaId": "default",
@@ -90,7 +90,7 @@ class KratosClientTest {
                         "organizationId": null
                     }
                 ]""",
-                        ),
+                    ),
                     status = HttpStatusCode.OK,
                     headers = headersOf(HttpHeaders.ContentType, "application/json"),
                 )

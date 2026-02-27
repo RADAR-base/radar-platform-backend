@@ -21,97 +21,95 @@ import org.radarbase.datasources.model.RestSourceUser
 import org.slf4j.LoggerFactory
 
 @Singleton
-class RestSourcesClient
-    @Inject
-    constructor(
-        config: DataSourcesServiceConfig,
-        private val tokenProvider: ServiceTokenProvider,
-    ) {
-        private val logger = LoggerFactory.getLogger(RestSourcesClient::class.java)
-        private val restSourcesConfig = config.restSources
-        private val json =
-            Json {
-                ignoreUnknownKeys = true
-            }
+class RestSourcesClient @Inject constructor(
+    config: DataSourcesServiceConfig,
+    private val tokenProvider: ServiceTokenProvider,
+) {
+    private val logger = LoggerFactory.getLogger(RestSourcesClient::class.java)
+    private val restSourcesConfig = config.restSources
+    private val json =
+        Json {
+            ignoreUnknownKeys = true
+        }
 
-        private val client: HttpClient =
-            HttpClient(CIO) {
-                install(HttpTimeout) {
-                    requestTimeoutMillis = restSourcesConfig.timeoutSeconds * 1_000
-                }
-            }
-
-        suspend fun getUsers(
-            projectId: String,
-            participantId: String,
-            authorized: Boolean = true,
-        ): List<RestSourceUser> {
-            logger.debug(
-                "Fetching REST sources users for project {}, participantId {}, authorized {}",
-                projectId,
-                participantId,
-                authorized,
-            )
-
-            return try {
-                val token = tokenProvider.getToken()
-
-                val response: HttpResponse =
-                    client.get {
-                        url(restSourcesConfig.baseUrl + restSourcesConfig.endpoints.users)
-                        parameter("authorized", authorized)
-                        parameter("search", participantId)
-                        parameter("project-id", projectId)
-                        header(HttpHeaders.Authorization, "Bearer $token")
-                    }
-
-                // Check HTTP status code
-                if (response.status.value !in 200..299) {
-                    logger.warn(
-                        "REST sources API returned non-success status {} for project {}, participant {}",
-                        response.status,
-                        projectId,
-                        participantId,
-                    )
-                    return emptyList()
-                }
-
-                val responseText = response.bodyAsText()
-
-                // Check if response is an error JSON before deserializing
-                if (responseText.trimStart().startsWith("{\"error\"")) {
-                    logger.warn(
-                        "REST sources API returned error response for project {}, participant {}: {}",
-                        projectId,
-                        participantId,
-                        responseText,
-                    )
-                    return emptyList()
-                }
-
-                val wrapper = json.decodeFromString<RestSourcesUsersResponse>(responseText)
-                return wrapper.users
-            } catch (e: kotlinx.serialization.SerializationException) {
-                logger.warn(
-                    "Failed to deserialize REST sources response for project {}, participant {}: {}",
-                    projectId,
-                    participantId,
-                    e.message,
-                )
-                emptyList()
-            } catch (e: Exception) {
-                logger.info(
-                    "Failed to fetch REST sources users for project {}, participant {}",
-                    projectId,
-                    participantId,
-                    e,
-                )
-                emptyList()
+    private val client: HttpClient =
+        HttpClient(CIO) {
+            install(HttpTimeout) {
+                requestTimeoutMillis = restSourcesConfig.timeoutSeconds * 1_000
             }
         }
 
-        @Serializable
-        private data class RestSourcesUsersResponse(
-            @SerialName("users") val users: List<RestSourceUser> = emptyList(),
+    suspend fun getUsers(
+        projectId: String,
+        participantId: String,
+        authorized: Boolean = true,
+    ): List<RestSourceUser> {
+        logger.debug(
+            "Fetching REST sources users for project {}, participantId {}, authorized {}",
+            projectId,
+            participantId,
+            authorized,
         )
+
+        return try {
+            val token = tokenProvider.getToken()
+
+            val response: HttpResponse =
+                client.get {
+                    url(restSourcesConfig.baseUrl + restSourcesConfig.endpoints.users)
+                    parameter("authorized", authorized)
+                    parameter("search", participantId)
+                    parameter("project-id", projectId)
+                    header(HttpHeaders.Authorization, "Bearer $token")
+                }
+
+            // Check HTTP status code
+            if (response.status.value !in 200..299) {
+                logger.warn(
+                    "REST sources API returned non-success status {} for project {}, participant {}",
+                    response.status,
+                    projectId,
+                    participantId,
+                )
+                return emptyList()
+            }
+
+            val responseText = response.bodyAsText()
+
+            // Check if response is an error JSON before deserializing
+            if (responseText.trimStart().startsWith("{\"error\"")) {
+                logger.warn(
+                    "REST sources API returned error response for project {}, participant {}: {}",
+                    projectId,
+                    participantId,
+                    responseText,
+                )
+                return emptyList()
+            }
+
+            val wrapper = json.decodeFromString<RestSourcesUsersResponse>(responseText)
+            return wrapper.users
+        } catch (e: kotlinx.serialization.SerializationException) {
+            logger.warn(
+                "Failed to deserialize REST sources response for project {}, participant {}: {}",
+                projectId,
+                participantId,
+                e.message,
+            )
+            emptyList()
+        } catch (e: Exception) {
+            logger.info(
+                "Failed to fetch REST sources users for project {}, participant {}",
+                projectId,
+                participantId,
+                e,
+            )
+            emptyList()
+        }
     }
+
+    @Serializable
+    private data class RestSourcesUsersResponse(
+        @SerialName("users") val users: List<RestSourceUser> = emptyList(),
+    )
+}

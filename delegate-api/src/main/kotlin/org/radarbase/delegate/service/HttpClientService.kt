@@ -27,108 +27,108 @@ import java.time.Duration
 
 @Singleton
 class HttpClientService
-    @Inject
-    constructor() {
-        private val logger = LoggerFactory.getLogger(HttpClientService::class.java)
+@Inject
+constructor() {
+    private val logger = LoggerFactory.getLogger(HttpClientService::class.java)
 
-        val client: HttpClient =
-            HttpClient(CIO) {
-                install(ContentNegotiation) {
-                    json()
-                }
-                install(HttpTimeout) {
-                    requestTimeoutMillis = Duration.ofSeconds(30).toMillis()
-                    connectTimeoutMillis = Duration.ofSeconds(30).toMillis()
-                }
-                install(HttpRequestRetry) {
-                    maxRetries = 3
-                    retryOnExceptionIf { _, cause ->
-                        cause is HttpRequestTimeoutException ||
-                            cause is SocketTimeoutException
-                    }
-                }
+    val client: HttpClient =
+        HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json()
             }
-
-        suspend fun <T> get(
-            url: String,
-            responseHandler: (String) -> T,
-            authToken: String? = null,
-        ): T {
-            try {
-                val response =
-                    client.get(url) {
-                        authToken?.let { header(HttpHeaders.Authorization, "Bearer $it") }
-                    }
-                if (response.status.isSuccess()) {
-                    return responseHandler(response.bodyAsText())
-                } else {
-                    logger.error("HTTP request failed with status ${response.status}: ${response.bodyAsText()}")
-                    throw RuntimeException("HTTP request failed with status ${response.status}")
+            install(HttpTimeout) {
+                requestTimeoutMillis = Duration.ofSeconds(30).toMillis()
+                connectTimeoutMillis = Duration.ofSeconds(30).toMillis()
+            }
+            install(HttpRequestRetry) {
+                maxRetries = 3
+                retryOnExceptionIf { _, cause ->
+                    cause is HttpRequestTimeoutException ||
+                        cause is SocketTimeoutException
                 }
-            } catch (e: Exception) {
-                logger.error("Failed to make HTTP request to $url", e)
-                throw e
             }
         }
 
-        suspend inline fun <reified T> getJson(
-            url: String,
-            authToken: String? = null,
-        ): T {
+    suspend fun <T> get(
+        url: String,
+        responseHandler: (String) -> T,
+        authToken: String? = null,
+    ): T {
+        try {
             val response =
                 client.get(url) {
                     authToken?.let { header(HttpHeaders.Authorization, "Bearer $it") }
                 }
-            return Json {
-                ignoreUnknownKeys = true
-            }.decodeFromString<T>(response.bodyAsText())
-        }
-
-        /**
-         * POST with JSON body; returns (statusCode, responseBody).
-         */
-        suspend fun postWithBody(
-            url: String,
-            body: String,
-            authToken: String? = null,
-        ): Pair<Int, String> {
-            val response =
-                client.post(url) {
-                    authToken?.let { header(HttpHeaders.Authorization, "Bearer $it") }
-                    contentType(ContentType.Application.Json)
-                    setBody(body)
-                }
-            return response.status.value to response.bodyAsText()
-        }
-
-        /**
-         * PUT with JSON body; returns (statusCode, responseBody).
-         */
-        suspend fun putWithBody(
-            url: String,
-            body: String,
-            authToken: String? = null,
-        ): Pair<Int, String> {
-            val response =
-                client.put(url) {
-                    authToken?.let { header(HttpHeaders.Authorization, "Bearer $it") }
-                    contentType(ContentType.Application.Json)
-                    setBody(body)
-                }
-            return response.status.value to response.bodyAsText()
-        }
-
-        /**
-         * DELETE request; returns (statusCode, responseBody).
-         */
-        suspend fun delete(
-            url: String,
-            authToken: String? = null,
-        ): Pair<Int, String> {
-            val response =
-                client.delete(url) {
-                    authToken?.let { header(HttpHeaders.Authorization, "Bearer $it") }
-                }
-            return response.status.value to response.bodyAsText()
+            if (response.status.isSuccess()) {
+                return responseHandler(response.bodyAsText())
+            } else {
+                logger.error("HTTP request failed with status ${response.status}: ${response.bodyAsText()}")
+                throw RuntimeException("HTTP request failed with status ${response.status}")
+            }
+        } catch (e: Exception) {
+            logger.error("Failed to make HTTP request to $url", e)
+            throw e
         }
     }
+
+    suspend inline fun <reified T> getJson(
+        url: String,
+        authToken: String? = null,
+    ): T {
+        val response =
+            client.get(url) {
+                authToken?.let { header(HttpHeaders.Authorization, "Bearer $it") }
+            }
+        return Json {
+            ignoreUnknownKeys = true
+        }.decodeFromString<T>(response.bodyAsText())
+    }
+
+    /**
+     * POST with JSON body; returns (statusCode, responseBody).
+     */
+    suspend fun postWithBody(
+        url: String,
+        body: String,
+        authToken: String? = null,
+    ): Pair<Int, String> {
+        val response =
+            client.post(url) {
+                authToken?.let { header(HttpHeaders.Authorization, "Bearer $it") }
+                contentType(ContentType.Application.Json)
+                setBody(body)
+            }
+        return response.status.value to response.bodyAsText()
+    }
+
+    /**
+     * PUT with JSON body; returns (statusCode, responseBody).
+     */
+    suspend fun putWithBody(
+        url: String,
+        body: String,
+        authToken: String? = null,
+    ): Pair<Int, String> {
+        val response =
+            client.put(url) {
+                authToken?.let { header(HttpHeaders.Authorization, "Bearer $it") }
+                contentType(ContentType.Application.Json)
+                setBody(body)
+            }
+        return response.status.value to response.bodyAsText()
+    }
+
+    /**
+     * DELETE request; returns (statusCode, responseBody).
+     */
+    suspend fun delete(
+        url: String,
+        authToken: String? = null,
+    ): Pair<Int, String> {
+        val response =
+            client.delete(url) {
+                authToken?.let { header(HttpHeaders.Authorization, "Bearer $it") }
+            }
+        return response.status.value to response.bodyAsText()
+    }
+}
