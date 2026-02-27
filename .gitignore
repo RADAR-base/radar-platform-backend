@@ -33,33 +33,3 @@ build/
 *.swo
 *.bak
 *.tmp
-
-# Node/npm (if present)
-node_modules/
-
-# Python (if present)
-__pycache__/
-*.pyc
-
-# VSCode
-.vscode/
-
-# Coverage
-coverage/
-**/coverage/
-
-# Ignore local config
-config.local.yaml
-
-# Ignore generated files
-out/
-
-# Ignore by convention
-*.orig
-*.rej
-
-# Ignore backup files
-*~
-
-# Ignore system files
-Thumbs.db
