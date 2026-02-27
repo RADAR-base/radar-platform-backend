@@ -21,76 +21,63 @@ import org.radarbase.project.model.RadarProject
 
 @Singleton
 class ProjectServiceImpl
-@Inject
-constructor(
+@Inject constructor(
     private val radarProjectClient: RadarProjectClient,
 ) : ProjectService {
     // TODO: Combine with project data from SEP protocol json on github
 
-    private fun RadarProject.toProject(): Project =
-        Project(
-            projectId = attributes["External-project-id"] ?: id.toString(),
-            name = humanReadableProjectName ?: projectName,
-            description = description ?: "",
-            status = projectStatus ?: "UNKNOWN",
-            startDate = startDate ?: "",
-            endDate = endDate ?: "",
-            location = location ?: "",
-            population =
-            Population(
-                ageRange =
-                AgeRange(
-                    min = 0,
-                    max = 0,
-                ),
-                maxParticipants = 0,
+    private fun RadarProject.toProject(): Project = Project(
+        projectId = attributes["External-project-id"] ?: id.toString(),
+        name = humanReadableProjectName ?: projectName,
+        description = description ?: "",
+        status = projectStatus ?: "UNKNOWN",
+        startDate = startDate ?: "",
+        endDate = endDate ?: "",
+        location = location ?: "",
+        population = Population(
+            ageRange = AgeRange(
+                min = 0,
+                max = 0,
             ),
-            domain =
-            Domain(
-                area = "",
-                keywords = emptyList(),
+            maxParticipants = 0,
+        ),
+        domain = Domain(
+            area = "",
+            keywords = emptyList(),
+        ),
+        eligibility = Eligibility(
+            inclusion = emptyList(),
+            exclusion = emptyList(),
+        ),
+        design = Design(
+            phases = emptyList(),
+            measurements = emptyList(),
+            intervention = Intervention(
+                description = "",
+                deliveryModes = emptyList(),
             ),
-            eligibility =
-            Eligibility(
-                inclusion = emptyList(),
-                exclusion = emptyList(),
+            outcomes = Outcomes(
+                primary = emptyList(),
+                secondary = emptyList(),
             ),
-            design =
-            Design(
-                phases = emptyList(),
-                measurements = emptyList(),
-                intervention =
-                Intervention(
-                    description = "",
-                    deliveryModes = emptyList(),
-                ),
-                outcomes =
-                Outcomes(
-                    primary = emptyList(),
-                    secondary = emptyList(),
-                ),
-            ),
-            technology =
-            Technology(
-                devices = emptyList(),
-                dataTypes = emptyList(),
-                frequency = "",
-                notes = null,
-            ),
-            analysis =
-            Analysis(
-                features = emptyList(),
-                visualizations = emptyList(),
-            ),
-            contact =
-            Contact(
-                email = "",
-                resources = emptyList(),
-            ),
-        )
+        ),
+        technology = Technology(
+            devices = emptyList(),
+            dataTypes = emptyList(),
+            frequency = "",
+            notes = null,
+        ),
+        analysis = Analysis(
+            features = emptyList(),
+            visualizations = emptyList(),
+        ),
+        contact = Contact(
+            email = "",
+            resources = emptyList(),
+        ),
+    )
 
-    override suspend fun getProjects(authToken: String?): List<Project> =
-        radarProjectClient.getProjects(authToken).map { it.toProject() }
+    override suspend fun getProjects(authToken: String?): List<Project> = radarProjectClient.getProjects(authToken).map { it.toProject() }
 
     override suspend fun getProject(
         projectId: Long,

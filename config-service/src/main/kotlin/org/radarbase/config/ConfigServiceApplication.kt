@@ -15,14 +15,13 @@ class ConfigServiceApplication {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val config =
-                try {
-                    ConfigLoader.loadConfig<ConfigServiceConfig>("config.yaml", args)
-                } catch (_: IllegalArgumentException) {
-                    logger.error("No configuration file was found.")
-                    logger.error("Usage: config-service <config-file>")
-                    exitProcess(1)
-                }
+            val config = try {
+                ConfigLoader.loadConfig<ConfigServiceConfig>("config.yaml", args)
+            } catch (_: IllegalArgumentException) {
+                logger.error("No configuration file was found.")
+                logger.error("Usage: config-service <config-file>")
+                exitProcess(1)
+            }
 
             try {
                 config.validate()

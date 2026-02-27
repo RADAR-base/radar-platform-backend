@@ -21,8 +21,7 @@ constructor(
         authToken: String?,
     ): List<Participant> {
         logger.debug("Fetching participants for project $projectId")
-        val url =
-            "$baseUrl/project/$projectId/participants"
+        val url = "$baseUrl/project/$projectId/participants"
         return httpClient.getJson(url, authToken)
     }
 

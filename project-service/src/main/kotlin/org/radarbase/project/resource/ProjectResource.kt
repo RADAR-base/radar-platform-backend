@@ -202,13 +202,12 @@ constructor(
         val authToken = extractBearerToken(headers)
         try {
             asyncCoroutineService.runAsCoroutine(asyncResponse, timeout) {
-                val success =
-                    projectService.deleteGroup(
-                        projectName,
-                        groupName,
-                        unlinkSubjects ?: false,
-                        authToken,
-                    )
+                val success = projectService.deleteGroup(
+                    projectName,
+                    groupName,
+                    unlinkSubjects ?: false,
+                    authToken,
+                )
                 if (!success) throw IllegalStateException("Failed to delete group")
             }
         } catch (e: Exception) {

@@ -32,15 +32,14 @@ class ServiceTokenProvider(
     private val mutex = Mutex()
     private var cachedToken: CachedToken? = null
 
-    private val client: HttpClient =
-        HttpClient(CIO) {
-            install(ContentNegotiation) {
-                json()
-            }
-            install(HttpTimeout) {
-                connectTimeoutMillis = 30_000
-            }
+    private val client: HttpClient = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json()
         }
+        install(HttpTimeout) {
+            connectTimeoutMillis = 30_000
+        }
+    }
 
     @Serializable
     private data class TokenResponse(
@@ -63,21 +62,20 @@ class ServiceTokenProvider(
             }
 
             logger.debug("Obtaining new service token from ${serviceAuth.tokenEndpoint}")
-            val response =
-                client.post(serviceAuth.tokenEndpoint) {
-                    contentType(ContentType.Application.FormUrlEncoded)
-                    setBody(
-                        FormDataContent(
-                            Parameters.build {
-                                append("grant_type", "client_credentials")
-                                append("client_id", serviceAuth.clientId)
-                                append("client_secret", serviceAuth.clientSecret)
-                                serviceAuth.scope?.let { append("scope", it) }
-                                serviceAuth.audience?.let { append("audience", it) }
-                            },
-                        ),
-                    )
-                }
+            val response = client.post(serviceAuth.tokenEndpoint) {
+                contentType(ContentType.Application.FormUrlEncoded)
+                setBody(
+                    FormDataContent(
+                        Parameters.build {
+                            append("grant_type", "client_credentials")
+                            append("client_id", serviceAuth.clientId)
+                            append("client_secret", serviceAuth.clientSecret)
+                            serviceAuth.scope?.let { append("scope", it) }
+                            serviceAuth.audience?.let { append("audience", it) }
+                        },
+                    ),
+                )
+            }
 
             val tokenResponse = Json.decodeFromString<TokenResponse>(response.bodyAsText())
             val expiresAt = Instant.now().plusSeconds(tokenResponse.expires_in)

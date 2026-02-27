@@ -29,8 +29,7 @@ import java.util.Base64
 
 @Singleton
 class GithubStudyConfigProvider
-@Inject
-constructor(
+@Inject constructor(
     private val config: ConfigServiceConfig,
 ) : StudyConfigProvider {
     override fun supportsWrites(): Boolean = true
@@ -39,29 +38,25 @@ constructor(
 
     private val logger = LoggerFactory.getLogger(GithubStudyConfigProvider::class.java)
 
-    private val client: HttpClient =
-        HttpClient(CIO) {
-            install(ContentNegotiation) {
-                json()
-            }
+    private val client: HttpClient = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json()
         }
+    }
 
-    private val json =
-        Json {
-            ignoreUnknownKeys = true
-        }
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
-    private val jsonForWriting =
-        Json {
-            ignoreUnknownKeys = true
-            prettyPrint = true
-        }
+    private val jsonForWriting = Json {
+        ignoreUnknownKeys = true
+        prettyPrint = true
+    }
 
-    private val jsonPut =
-        Json {
-            encodeDefaults = false
-            ignoreUnknownKeys = true
-        }
+    private val jsonPut = Json {
+        encodeDefaults = false
+        ignoreUnknownKeys = true
+    }
 
     private val githubConfig get() = config.providers.github
 
@@ -69,43 +64,35 @@ constructor(
 
     private fun rawUrl(path: String): String = "${githubConfig.baseUrl.trimEnd('/')}/$path"
 
-    private fun questionnaireContentsApiUrl(): String =
-        "https://api.github.com/repos/${githubConfig.questionnaireRepoOwner}/${githubConfig.questionnaireRepo}/contents"
+    private fun questionnaireContentsApiUrl(): String = "https://api.github.com/repos/${githubConfig.questionnaireRepoOwner}/${githubConfig.questionnaireRepo}/contents"
 
     private fun questionnaireRawUrl(path: String): String =
-        "https://raw.githubusercontent.com/${githubConfig.questionnaireRepoOwner}/" +
-            "${githubConfig.questionnaireRepo}/${githubConfig.questionnaireRepoBranch}/$path"
+        "https://raw.githubusercontent.com/${githubConfig.questionnaireRepoOwner}/" + "${githubConfig.questionnaireRepo}/${githubConfig.questionnaireRepoBranch}/$path"
 
-    private fun useProtocolRepo(): Boolean =
-        !githubConfig.protocolRepoOwner.isNullOrBlank() && !githubConfig.protocolRepo.isNullOrBlank()
+    private fun useProtocolRepo(): Boolean = !githubConfig.protocolRepoOwner.isNullOrBlank() && !githubConfig.protocolRepo.isNullOrBlank()
 
     private fun protocolBranch(): String = githubConfig.protocolRepoBranch?.takeIf { it.isNotBlank() } ?: githubConfig.branch
 
-    private fun protocolContentsApiUrl(): String =
-        "https://api.github.com/repos/${githubConfig.protocolRepoOwner!!.trim()}/${githubConfig.protocolRepo!!.trim()}/contents"
+    private fun protocolContentsApiUrl(): String = "https://api.github.com/repos/${githubConfig.protocolRepoOwner!!.trim()}/${githubConfig.protocolRepo!!.trim()}/contents"
 
     private fun protocolRawUrl(path: String): String =
-        "https://raw.githubusercontent.com/${githubConfig.protocolRepoOwner!!.trim()}/" +
-            "${githubConfig.protocolRepo!!.trim()}/${protocolBranch()}/$path"
+        "https://raw.githubusercontent.com/${githubConfig.protocolRepoOwner!!.trim()}/" + "${githubConfig.protocolRepo!!.trim()}/${protocolBranch()}/$path"
 
-    private fun useEnrolmentRepo(): Boolean =
-        !githubConfig.enrolmentRepoOwner.isNullOrBlank() && !githubConfig.enrolmentRepo.isNullOrBlank()
+    private fun useEnrolmentRepo(): Boolean = !githubConfig.enrolmentRepoOwner.isNullOrBlank() && !githubConfig.enrolmentRepo.isNullOrBlank()
 
     private fun enrolmentBranch(): String = githubConfig.enrolmentRepoBranch?.takeIf { it.isNotBlank() } ?: githubConfig.branch
 
-    private fun enrolmentContentsApiUrl(): String =
-        "https://api.github.com/repos/${githubConfig.enrolmentRepoOwner!!.trim()}/${githubConfig.enrolmentRepo!!.trim()}/contents"
+    private fun enrolmentContentsApiUrl(): String = "https://api.github.com/repos/${githubConfig.enrolmentRepoOwner!!.trim()}/${githubConfig.enrolmentRepo!!.trim()}/contents"
 
     private suspend fun getEnrolmentFileSha(path: String): String? {
         val token = githubConfig.token ?: return null
         val url = "${enrolmentContentsApiUrl()}/$path?ref=${enrolmentBranch()}"
         return try {
-            val response =
-                client.get(url) {
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                    header(HttpHeaders.Accept, "application/vnd.github+json")
-                    header("X-GitHub-Api-Version", "2022-11-28")
-                }
+            val response = client.get(url) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.Accept, "application/vnd.github+json")
+                header("X-GitHub-Api-Version", "2022-11-28")
+            }
             if (response.status != HttpStatusCode.OK) return null
             val body = response.bodyAsText()
             val element = json.parseToJsonElement(body)
@@ -120,12 +107,11 @@ constructor(
         val token = githubConfig.token ?: return null
         val url = "${enrolmentContentsApiUrl()}/$path?ref=${enrolmentBranch()}"
         return try {
-            val response =
-                client.get(url) {
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                    header(HttpHeaders.Accept, "application/vnd.github+json")
-                    header("X-GitHub-Api-Version", "2022-11-28")
-                }
+            val response = client.get(url) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.Accept, "application/vnd.github+json")
+                header("X-GitHub-Api-Version", "2022-11-28")
+            }
             if (response.status != HttpStatusCode.OK) return null
             val body = response.bodyAsText()
             val element = json.parseToJsonElement(body)
@@ -142,19 +128,16 @@ constructor(
         content: String,
         message: String,
     ) {
-        val token =
-            githubConfig.token
-                ?: throw IllegalStateException("GitHub token required for enrolment repo writes")
+        val token = githubConfig.token ?: throw IllegalStateException("GitHub token required for enrolment repo writes")
         val sha = getEnrolmentFileSha(path)
         val base64Content = Base64.getEncoder().encodeToString(content.toByteArray(Charsets.UTF_8))
         val url = "${enrolmentContentsApiUrl()}/$path"
-        val putBody =
-            GithubPutContentRequest(
-                message = message,
-                content = base64Content,
-                sha = sha,
-                branch = enrolmentBranch(),
-            )
+        val putBody = GithubPutContentRequest(
+            message = message,
+            content = base64Content,
+            sha = sha,
+            branch = enrolmentBranch(),
+        )
         val bodyString = jsonPut.encodeToString(serializer<GithubPutContentRequest>(), putBody)
         logger.info(
             "[GITHUB] PUT enrolment repo {} branch={} message={}",
@@ -162,14 +145,13 @@ constructor(
             enrolmentBranch(),
             message,
         )
-        val response =
-            client.put(url) {
-                header(HttpHeaders.Authorization, "Bearer $token")
-                header(HttpHeaders.Accept, "application/vnd.github+json")
-                header("X-GitHub-Api-Version", "2022-11-28")
-                header(HttpHeaders.ContentType, "application/json")
-                setBody(bodyString)
-            }
+        val response = client.put(url) {
+            header(HttpHeaders.Authorization, "Bearer $token")
+            header(HttpHeaders.Accept, "application/vnd.github+json")
+            header("X-GitHub-Api-Version", "2022-11-28")
+            header(HttpHeaders.ContentType, "application/json")
+            setBody(bodyString)
+        }
         val responseBody = response.bodyAsText()
         if (response.status.value !in 200..299) {
             logger.error("[GITHUB] PUT enrolment repo {} failed: status={} body={}", url, response.status.value, responseBody)
@@ -182,12 +164,11 @@ constructor(
         val url = "${contentsApiUrl()}/$path?ref=${githubConfig.branch}"
         return try {
             logger.info("[GITHUB] GET {} (branch={})", url, githubConfig.branch)
-            val response =
-                client.get(url) {
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                    header(HttpHeaders.Accept, "application/vnd.github+json")
-                    header("X-GitHub-Api-Version", "2022-11-28")
-                }
+            val response = client.get(url) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.Accept, "application/vnd.github+json")
+                header("X-GitHub-Api-Version", "2022-11-28")
+            }
             val body = response.bodyAsText()
             logger.info("[GITHUB] GET {} -> status={}, body={}", url, response.status.value, truncate(body, 200))
             if (response.status != HttpStatusCode.OK) return null
@@ -206,19 +187,16 @@ constructor(
         content: String,
         message: String,
     ) {
-        val token =
-            githubConfig.token
-                ?: throw IllegalStateException("GitHub token required for writes")
+        val token = githubConfig.token ?: throw IllegalStateException("GitHub token required for writes")
         val sha = getFileSha(path)
         val base64Content = Base64.getEncoder().encodeToString(content.toByteArray(Charsets.UTF_8))
         val url = "${contentsApiUrl()}/$path"
-        val putBody =
-            GithubPutContentRequest(
-                message = message,
-                content = base64Content,
-                sha = sha,
-                branch = githubConfig.branch,
-            )
+        val putBody = GithubPutContentRequest(
+            message = message,
+            content = base64Content,
+            sha = sha,
+            branch = githubConfig.branch,
+        )
         val bodyString = jsonPut.encodeToString(serializer<GithubPutContentRequest>(), putBody)
         logger.info(
             "[GITHUB] PUT {} branch={} message={} sha={} contentLen={}",
@@ -228,14 +206,13 @@ constructor(
             sha ?: "null (create)",
             content.length,
         )
-        val response =
-            client.put(url) {
-                header(HttpHeaders.Authorization, "Bearer $token")
-                header(HttpHeaders.Accept, "application/vnd.github+json")
-                header("X-GitHub-Api-Version", "2022-11-28")
-                header(HttpHeaders.ContentType, "application/json")
-                setBody(bodyString)
-            }
+        val response = client.put(url) {
+            header(HttpHeaders.Authorization, "Bearer $token")
+            header(HttpHeaders.Accept, "application/vnd.github+json")
+            header("X-GitHub-Api-Version", "2022-11-28")
+            header(HttpHeaders.ContentType, "application/json")
+            setBody(bodyString)
+        }
         val responseBody = response.bodyAsText()
         logger.info(
             "[GITHUB] PUT {} -> status={}, body={}",
@@ -252,12 +229,11 @@ constructor(
         val token = githubConfig.token ?: return null
         val url = "${questionnaireContentsApiUrl()}/$path?ref=${githubConfig.questionnaireRepoBranch}"
         return try {
-            val response =
-                client.get(url) {
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                    header(HttpHeaders.Accept, "application/vnd.github+json")
-                    header("X-GitHub-Api-Version", "2022-11-28")
-                }
+            val response = client.get(url) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.Accept, "application/vnd.github+json")
+                header("X-GitHub-Api-Version", "2022-11-28")
+            }
             if (response.status != HttpStatusCode.OK) return null
             val body = response.bodyAsText()
             val element = json.parseToJsonElement(body)
@@ -273,19 +249,16 @@ constructor(
         content: String,
         message: String,
     ) {
-        val token =
-            githubConfig.token
-                ?: throw IllegalStateException("GitHub token required for questionnaire repo writes")
+        val token = githubConfig.token ?: throw IllegalStateException("GitHub token required for questionnaire repo writes")
         val sha = getQuestionnaireFileSha(path)
         val base64Content = Base64.getEncoder().encodeToString(content.toByteArray(Charsets.UTF_8))
         val url = "${questionnaireContentsApiUrl()}/$path"
-        val putBody =
-            GithubPutContentRequest(
-                message = message,
-                content = base64Content,
-                sha = sha,
-                branch = githubConfig.questionnaireRepoBranch,
-            )
+        val putBody = GithubPutContentRequest(
+            message = message,
+            content = base64Content,
+            sha = sha,
+            branch = githubConfig.questionnaireRepoBranch,
+        )
         val bodyString = jsonPut.encodeToString(serializer<GithubPutContentRequest>(), putBody)
         logger.info(
             "[GITHUB] PUT questionnaire repo {} branch={} message={}",
@@ -293,14 +266,13 @@ constructor(
             githubConfig.questionnaireRepoBranch,
             message,
         )
-        val response =
-            client.put(url) {
-                header(HttpHeaders.Authorization, "Bearer $token")
-                header(HttpHeaders.Accept, "application/vnd.github+json")
-                header("X-GitHub-Api-Version", "2022-11-28")
-                header(HttpHeaders.ContentType, "application/json")
-                setBody(bodyString)
-            }
+        val response = client.put(url) {
+            header(HttpHeaders.Authorization, "Bearer $token")
+            header(HttpHeaders.Accept, "application/vnd.github+json")
+            header("X-GitHub-Api-Version", "2022-11-28")
+            header(HttpHeaders.ContentType, "application/json")
+            setBody(bodyString)
+        }
         val responseBody = response.bodyAsText()
         if (response.status.value !in 200..299) {
             logger.error("[GITHUB] PUT questionnaire repo {} failed: status={} body={}", url, response.status.value, responseBody)
@@ -318,12 +290,11 @@ constructor(
         val token = githubConfig.token ?: return null
         val url = "${contentsApiUrl()}/$path?ref=${githubConfig.branch}"
         return try {
-            val response =
-                client.get(url) {
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                    header(HttpHeaders.Accept, "application/vnd.github+json")
-                    header("X-GitHub-Api-Version", "2022-11-28")
-                }
+            val response = client.get(url) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.Accept, "application/vnd.github+json")
+                header("X-GitHub-Api-Version", "2022-11-28")
+            }
             if (response.status != HttpStatusCode.OK) return null
             val body = response.bodyAsText()
             val element = json.parseToJsonElement(body)
@@ -339,12 +310,11 @@ constructor(
         val token = githubConfig.token ?: return null
         val url = "${protocolContentsApiUrl()}/$path?ref=${protocolBranch()}"
         return try {
-            val response =
-                client.get(url) {
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                    header(HttpHeaders.Accept, "application/vnd.github+json")
-                    header("X-GitHub-Api-Version", "2022-11-28")
-                }
+            val response = client.get(url) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.Accept, "application/vnd.github+json")
+                header("X-GitHub-Api-Version", "2022-11-28")
+            }
             if (response.status != HttpStatusCode.OK) return null
             val body = response.bodyAsText()
             val element = json.parseToJsonElement(body)
@@ -359,12 +329,11 @@ constructor(
         val token = githubConfig.token ?: return null
         val url = "${protocolContentsApiUrl()}/$path?ref=${protocolBranch()}"
         return try {
-            val response =
-                client.get(url) {
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                    header(HttpHeaders.Accept, "application/vnd.github+json")
-                    header("X-GitHub-Api-Version", "2022-11-28")
-                }
+            val response = client.get(url) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.Accept, "application/vnd.github+json")
+                header("X-GitHub-Api-Version", "2022-11-28")
+            }
             if (response.status != HttpStatusCode.OK) return null
             val body = response.bodyAsText()
             val element = json.parseToJsonElement(body)
@@ -381,19 +350,16 @@ constructor(
         content: String,
         message: String,
     ) {
-        val token =
-            githubConfig.token
-                ?: throw IllegalStateException("GitHub token required for protocol repo writes")
+        val token = githubConfig.token ?: throw IllegalStateException("GitHub token required for protocol repo writes")
         val sha = getProtocolFileSha(path)
         val base64Content = Base64.getEncoder().encodeToString(content.toByteArray(Charsets.UTF_8))
         val url = "${protocolContentsApiUrl()}/$path"
-        val putBody =
-            GithubPutContentRequest(
-                message = message,
-                content = base64Content,
-                sha = sha,
-                branch = protocolBranch(),
-            )
+        val putBody = GithubPutContentRequest(
+            message = message,
+            content = base64Content,
+            sha = sha,
+            branch = protocolBranch(),
+        )
         val bodyString = jsonPut.encodeToString(serializer<GithubPutContentRequest>(), putBody)
         logger.info(
             "[GITHUB] PUT protocol repo {} branch={} message={}",
@@ -401,14 +367,13 @@ constructor(
             protocolBranch(),
             message,
         )
-        val response =
-            client.put(url) {
-                header(HttpHeaders.Authorization, "Bearer $token")
-                header(HttpHeaders.Accept, "application/vnd.github+json")
-                header("X-GitHub-Api-Version", "2022-11-28")
-                header(HttpHeaders.ContentType, "application/json")
-                setBody(bodyString)
-            }
+        val response = client.put(url) {
+            header(HttpHeaders.Authorization, "Bearer $token")
+            header(HttpHeaders.Accept, "application/vnd.github+json")
+            header("X-GitHub-Api-Version", "2022-11-28")
+            header(HttpHeaders.ContentType, "application/json")
+            setBody(bodyString)
+        }
         val responseBody = response.bodyAsText()
         if (response.status.value !in 200..299) {
             logger.error("[GITHUB] PUT protocol repo {} failed: status={} body={}", url, response.status.value, responseBody)
@@ -420,12 +385,11 @@ constructor(
         val token = githubConfig.token ?: return null
         val url = "${questionnaireContentsApiUrl()}/$path?ref=${githubConfig.questionnaireRepoBranch}"
         return try {
-            val response =
-                client.get(url) {
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                    header(HttpHeaders.Accept, "application/vnd.github+json")
-                    header("X-GitHub-Api-Version", "2022-11-28")
-                }
+            val response = client.get(url) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.Accept, "application/vnd.github+json")
+                header("X-GitHub-Api-Version", "2022-11-28")
+            }
             if (response.status != HttpStatusCode.OK) return null
             val body = response.bodyAsText()
             val element = json.parseToJsonElement(body)
@@ -437,17 +401,15 @@ constructor(
         }
     }
 
-    private fun prettyPrintJsonIfValid(content: String): String =
-        try {
-            val element = json.parseToJsonElement(content)
-            jsonForWriting.encodeToString(
-                kotlinx.serialization.json.JsonElement
-                    .serializer(),
-                element,
-            )
-        } catch (ex: Exception) {
-            content
-        }
+    private fun prettyPrintJsonIfValid(content: String): String = try {
+        val element = json.parseToJsonElement(content)
+        jsonForWriting.encodeToString(
+            kotlinx.serialization.json.JsonElement.serializer(),
+            element,
+        )
+    } catch (ex: Exception) {
+        content
+    }
 
     override suspend fun getStudyConfig(projectName: String): StudyConfig? {
         if (!githubConfig.enabled) return null
@@ -615,13 +577,10 @@ constructor(
             val path = "questionnaires/$questionnaireId/${questionnaireId}_armt.json"
             putQuestionnaireRepoFile(path, prettyPrintJsonIfValid(body), "Add/update questionnaire $questionnaireId")
             val href = questionnaireRawUrl(path)
-            val current =
-                getStudyConfig(projectName)?.config
-                    ?: throw NoSuchElementException("Study config not found for project $projectName")
-            val updatedQuestionnaires =
-                current.questionnaires.map { q ->
-                    if (q.id == questionnaireId) q.copy(href = href) else q
-                }
+            val current = getStudyConfig(projectName)?.config ?: throw NoSuchElementException("Study config not found for project $projectName")
+            val updatedQuestionnaires = current.questionnaires.map { q ->
+                if (q.id == questionnaireId) q.copy(href = href) else q
+            }
             if (updatedQuestionnaires.any { it.id == questionnaireId }) {
                 saveStudyDefinition(projectName, current.copy(questionnaires = updatedQuestionnaires))
                 logger.info("Questionnaire body saved for {} / {} via github provider (href={})", projectName, questionnaireId, href)

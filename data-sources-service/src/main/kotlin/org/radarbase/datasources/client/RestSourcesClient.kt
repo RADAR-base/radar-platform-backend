@@ -27,17 +27,15 @@ class RestSourcesClient @Inject constructor(
 ) {
     private val logger = LoggerFactory.getLogger(RestSourcesClient::class.java)
     private val restSourcesConfig = config.restSources
-    private val json =
-        Json {
-            ignoreUnknownKeys = true
-        }
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
-    private val client: HttpClient =
-        HttpClient(CIO) {
-            install(HttpTimeout) {
-                requestTimeoutMillis = restSourcesConfig.timeoutSeconds * 1_000
-            }
+    private val client: HttpClient = HttpClient(CIO) {
+        install(HttpTimeout) {
+            requestTimeoutMillis = restSourcesConfig.timeoutSeconds * 1_000
         }
+    }
 
     suspend fun getUsers(
         projectId: String,
@@ -54,14 +52,13 @@ class RestSourcesClient @Inject constructor(
         return try {
             val token = tokenProvider.getToken()
 
-            val response: HttpResponse =
-                client.get {
-                    url(restSourcesConfig.baseUrl + restSourcesConfig.endpoints.users)
-                    parameter("authorized", authorized)
-                    parameter("search", participantId)
-                    parameter("project-id", projectId)
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                }
+            val response: HttpResponse = client.get {
+                url(restSourcesConfig.baseUrl + restSourcesConfig.endpoints.users)
+                parameter("authorized", authorized)
+                parameter("search", participantId)
+                parameter("project-id", projectId)
+                header(HttpHeaders.Authorization, "Bearer $token")
+            }
 
             // Check HTTP status code
             if (response.status.value !in 200..299) {

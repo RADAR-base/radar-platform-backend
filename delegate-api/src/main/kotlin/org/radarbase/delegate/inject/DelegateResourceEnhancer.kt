@@ -24,19 +24,17 @@ import org.radarbase.delegate.service.ProjectServiceImpl as DelegateProjectServi
 class DelegateResourceEnhancer(
     private val config: DelegateConfig,
 ) : JerseyResourceEnhancer {
-    override val packages: Array<String> =
-        arrayOf(
-            "org.radarbase.delegate.filter",
-            "org.radarbase.delegate.resource",
-            "org.radarbase.delegate.api",
-            "org.radarbase.delegate.service",
-            "org.radarbase.delegate.config",
-        )
+    override val packages: Array<String> = arrayOf(
+        "org.radarbase.delegate.filter",
+        "org.radarbase.delegate.resource",
+        "org.radarbase.delegate.api",
+        "org.radarbase.delegate.service",
+        "org.radarbase.delegate.config",
+    )
 
-    override val classes: Array<Class<*>> =
-        arrayOf(
-            Filters.logResponse,
-        )
+    override val classes: Array<Class<*>> = arrayOf(
+        Filters.logResponse,
+    )
 
     override fun AbstractBinder.enhance() {
         bind(config)

@@ -23,14 +23,13 @@ class DataSourcesApplication {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val config =
-                try {
-                    ConfigLoader.loadConfig<DataSourcesServiceConfig>("config.yaml", args)
-                } catch (_: IllegalArgumentException) {
-                    logger.error("No configuration file was found.")
-                    logger.error("Usage: data-sources-service <config-file>")
-                    exitProcess(1)
-                }
+            val config = try {
+                ConfigLoader.loadConfig<DataSourcesServiceConfig>("config.yaml", args)
+            } catch (_: IllegalArgumentException) {
+                logger.error("No configuration file was found.")
+                logger.error("Usage: data-sources-service <config-file>")
+                exitProcess(1)
+            }
 
             try {
                 config.validate()
@@ -41,27 +40,23 @@ class DataSourcesApplication {
 
             LoggingConfigurator(config.logging).apply(LoggingConfigurator::configure)
 
-            val resourceConfig =
-                ResourceConfig()
-                    .packages(
-                        "org.radarbase.datasources.api",
-                        "org.radarbase.datasources.service",
-                        "org.radarbase.datasources.config",
-                    ).register(
-                        object : AbstractBinder() {
-                            override fun configure() {
-                                bind(config).to(DataSourcesServiceConfig::class.java)
-                                bind(ServiceTokenProvider(config.serviceAuth)).to(ServiceTokenProvider::class.java)
-                                bind(RadarSourcesClient::class.java).to(RadarSourcesClient::class.java)
-                                bind(RestSourcesClient::class.java).to(RestSourcesClient::class.java)
-                                bind(DataSourcesServiceImpl::class.java).to(DataSourcesService::class.java)
-                            }
-                        },
-                    )
+            val resourceConfig = ResourceConfig().packages(
+                "org.radarbase.datasources.api",
+                "org.radarbase.datasources.service",
+                "org.radarbase.datasources.config",
+            ).register(
+                object : AbstractBinder() {
+                    override fun configure() {
+                        bind(config).to(DataSourcesServiceConfig::class.java)
+                        bind(ServiceTokenProvider(config.serviceAuth)).to(ServiceTokenProvider::class.java)
+                        bind(RadarSourcesClient::class.java).to(RadarSourcesClient::class.java)
+                        bind(RestSourcesClient::class.java).to(RestSourcesClient::class.java)
+                        bind(DataSourcesServiceImpl::class.java).to(DataSourcesService::class.java)
+                    }
+                },
+            )
 
-            val server: HttpServer =
-                GrizzlyHttpServerFactory
-                    .createHttpServer(URI.create(config.server.baseUri), resourceConfig)
+            val server: HttpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(config.server.baseUri), resourceConfig)
 
             Runtime.getRuntime().addShutdownHook(
                 Thread {

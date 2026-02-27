@@ -15,8 +15,7 @@ import org.radarbase.datasources.service.DataSourcesService
 
 @Path("/data-sources-service")
 class DataSourceResource
-@Inject
-constructor(
+@Inject constructor(
     private val dataSourcesService: DataSourcesService,
     private val config: DataSourcesServiceConfig,
 ) {
@@ -41,10 +40,9 @@ constructor(
         @PathParam("projectId") projectId: String,
         @PathParam("participantId") participantId: String,
     ): Response {
-        val body =
-            runBlocking {
-                dataSourcesService.getParticipantSources(projectId, participantId)
-            }
+        val body = runBlocking {
+            dataSourcesService.getParticipantSources(projectId, participantId)
+        }
         return Response.ok(body, MediaType.APPLICATION_JSON).build()
     }
 }

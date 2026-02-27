@@ -26,12 +26,11 @@ class LoggingConfigurator(
             context = loggerContext
             name = "FILE"
             file = config.file
-            encoder =
-                PatternLayoutEncoder().apply {
-                    context = loggerContext
-                    pattern = config.pattern
-                    start()
-                }
+            encoder = PatternLayoutEncoder().apply {
+                context = loggerContext
+                pattern = config.pattern
+                start()
+            }
             start()
         }
 

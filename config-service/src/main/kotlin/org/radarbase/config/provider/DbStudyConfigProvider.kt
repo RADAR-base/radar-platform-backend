@@ -15,8 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Singleton
 class DbStudyConfigProvider
-@Inject
-constructor(
+@Inject constructor(
     private val config: ConfigServiceConfig,
 ) : StudyConfigProvider {
     override val id: String = "db"
@@ -25,10 +24,9 @@ constructor(
 
     private val logger = LoggerFactory.getLogger(DbStudyConfigProvider::class.java)
 
-    private val json =
-        Json {
-            ignoreUnknownKeys = true
-        }
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
     private val studyDefinitions = ConcurrentHashMap<String, StudyDefinition>()
     private val protocolBodies = ConcurrentHashMap<String, String>()

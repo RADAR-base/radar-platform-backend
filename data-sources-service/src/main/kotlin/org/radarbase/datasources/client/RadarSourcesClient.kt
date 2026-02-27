@@ -19,24 +19,21 @@ import org.slf4j.LoggerFactory
 
 @Singleton
 class RadarSourcesClient
-@Inject
-constructor(
+@Inject constructor(
     config: DataSourcesServiceConfig,
     private val tokenProvider: ServiceTokenProvider,
 ) {
     private val logger = LoggerFactory.getLogger(RadarSourcesClient::class.java)
     private val managementPortalConfig = config.managementPortal
-    private val json =
-        Json {
-            ignoreUnknownKeys = true
-        }
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
-    private val client: HttpClient =
-        HttpClient(CIO) {
-            install(HttpTimeout) {
-                requestTimeoutMillis = managementPortalConfig.timeoutSeconds * 1_000
-            }
+    private val client: HttpClient = HttpClient(CIO) {
+        install(HttpTimeout) {
+            requestTimeoutMillis = managementPortalConfig.timeoutSeconds * 1_000
         }
+    }
 
     suspend fun getParticipantSources(
         projectId: String,
@@ -45,16 +42,14 @@ constructor(
         logger.debug("Fetching sources for participant {} in project {}", participantId, projectId)
         return try {
             val token = tokenProvider.getToken()
-            val url =
-                buildSourcesUrl(
-                    participantId = participantId,
-                )
+            val url = buildSourcesUrl(
+                participantId = participantId,
+            )
 
-            val response: HttpResponse =
-                client.get {
-                    url(url)
-                    header(HttpHeaders.Authorization, "Bearer $token")
-                }
+            val response: HttpResponse = client.get {
+                url(url)
+                header(HttpHeaders.Authorization, "Bearer $token")
+            }
 
             // Check HTTP status code
             if (response.status.value !in 200..299) {
@@ -100,8 +95,5 @@ constructor(
         }
     }
 
-    private fun buildSourcesUrl(participantId: String): String =
-        managementPortalConfig.baseUrl +
-            managementPortalConfig.endpoints.participantSources
-                .replace("{participantId}", participantId)
+    private fun buildSourcesUrl(participantId: String): String = managementPortalConfig.baseUrl + managementPortalConfig.endpoints.participantSources.replace("{participantId}", participantId)
 }

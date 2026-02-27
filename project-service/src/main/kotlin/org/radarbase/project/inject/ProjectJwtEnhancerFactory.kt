@@ -8,11 +8,10 @@ import org.radarbase.project.config.ProjectServiceConfiguration
 class ProjectJwtEnhancerFactory(
     private val config: ProjectServiceConfiguration,
 ) : EnhancerFactory {
-    override fun createEnhancers(): List<JerseyResourceEnhancer> =
-        listOf(
-            ProjectResourceEnhancer(config),
-            Enhancers.ecdsa,
-            Enhancers.exception,
-            Enhancers.health,
-        )
+    override fun createEnhancers(): List<JerseyResourceEnhancer> = listOf(
+        ProjectResourceEnhancer(config),
+        Enhancers.ecdsa,
+        Enhancers.exception,
+        Enhancers.health,
+    )
 }

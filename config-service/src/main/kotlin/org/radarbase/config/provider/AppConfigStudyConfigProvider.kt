@@ -12,9 +12,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 @Singleton
-class AppConfigStudyConfigProvider
-@Inject
-constructor(
+class AppConfigStudyConfigProvider @Inject constructor(
     private val config: ConfigServiceConfig,
 ) : StudyConfigProvider {
     override val id: String = "appConfig"
@@ -23,10 +21,9 @@ constructor(
 
     private val logger = LoggerFactory.getLogger(AppConfigStudyConfigProvider::class.java)
 
-    private val json =
-        Json {
-            ignoreUnknownKeys = true
-        }
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
     override suspend fun getStudyConfig(projectName: String): StudyConfig? {
         val appConfig = config.providers.appConfig

@@ -22,17 +22,15 @@ class ProjectResourceEnhancer(
 ) : JerseyResourceEnhancer {
     private val serviceTokenProvider: ServiceTokenProvider = ServiceTokenProvider(config.serviceAuth)
 
-    override val packages: Array<String> =
-        arrayOf(
-            "org.radarbase.project.resource",
-            "org.radarbase.project.filter",
-        )
+    override val packages: Array<String> = arrayOf(
+        "org.radarbase.project.resource",
+        "org.radarbase.project.filter",
+    )
 
-    override val classes: Array<Class<*>> =
-        arrayOf(
-            Filters.logResponse,
-            AuthorizationFilter::class.java,
-        )
+    override val classes: Array<Class<*>> = arrayOf(
+        Filters.logResponse,
+        AuthorizationFilter::class.java,
+    )
 
     override fun AbstractBinder.enhance() {
         // Bind configuration
