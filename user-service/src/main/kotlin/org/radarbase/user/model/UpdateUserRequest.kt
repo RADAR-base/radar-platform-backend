@@ -14,7 +14,10 @@ data class UpdateUserRequest(
     val attributes: Map<String, String>? = null,
     val dateOfBirth: String? = null,
     val personName: String? = null,
-    val state: String? = null, // Kratos state (active, inactive, etc.)
-    val traits: KratosTraits? = null, // For updating Kratos traits
-    val metadataPublic: KratosMetadataPublic? = null, // For updating Kratos public metadata
+    // Kratos state (active, inactive, etc.)
+    val state: String? = null,
+    // For updating Kratos traits
+    val traits: KratosTraits? = null,
+    // For updating Kratos public metadata
+    val metadataPublic: KratosMetadataPublic? = null,
 )

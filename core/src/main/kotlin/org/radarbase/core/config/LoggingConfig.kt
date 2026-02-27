@@ -10,4 +10,3 @@ data class LoggingConfig(
     val file: String = "logs/platform-backend-core.log",
     val pattern: String = "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n",
 )
-

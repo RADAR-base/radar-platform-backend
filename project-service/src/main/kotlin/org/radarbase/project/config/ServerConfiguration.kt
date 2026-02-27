@@ -14,4 +14,3 @@ data class ServerConfiguration(
         val allowedHeaders: List<String>,
     )
 }
-

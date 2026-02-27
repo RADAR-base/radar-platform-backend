@@ -26,10 +26,12 @@ import org.radarbase.user.model.KratosUser
 import org.slf4j.LoggerFactory
 
 @Singleton
-class KratosClient @Inject constructor(
-    private val config: UserServiceConfig,
-    private val tokenProvider: ServiceTokenProvider,
-    ktorClientFactory: KtorClientFactory,
+class KratosClient
+    @Inject
+    constructor(
+        private val config: UserServiceConfig,
+        private val tokenProvider: ServiceTokenProvider,
+        ktorClientFactory: KtorClientFactory,
     ) {
         private val logger = LoggerFactory.getLogger(KratosClient::class.java)
         private val kratosConfig = config.kratos

@@ -96,7 +96,8 @@ class RadarClientTest {
             }
 
         mockClient = HttpClient(mockEngine)
-        ktorClientFactory = mockk<KtorClientFactory>().apply {
+        ktorClientFactory =
+            mockk<KtorClientFactory>().apply {
                 every { createClient(any(), any(), any()) } returns mockClient
             }
 

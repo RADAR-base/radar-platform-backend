@@ -82,14 +82,10 @@ class ServiceTokenProvider(
             val tokenResponse = Json.decodeFromString<TokenResponse>(response.bodyAsText())
             val expiresAt = Instant.now().plusSeconds(tokenResponse.expires_in)
 
-            cachedToken = CachedToken(
-                    token = tokenResponse.access_token,
-                    expiresAt = expiresAt,
-                )
+            cachedToken = CachedToken(token = tokenResponse.access_token, expiresAt = expiresAt)
 
             logger.debug("Service token obtained, expires at {}", expiresAt)
             tokenResponse.access_token
         }
     }
 }
-

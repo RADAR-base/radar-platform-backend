@@ -25,10 +25,12 @@ import org.radarbase.user.model.RadarUser
 import org.slf4j.LoggerFactory
 
 @Singleton
-class RadarClient @Inject constructor(
-    private val config: UserServiceConfig,
-    private val tokenProvider: ServiceTokenProvider,
-    ktorClientFactory: KtorClientFactory,
+class RadarClient
+    @Inject
+    constructor(
+        private val config: UserServiceConfig,
+        private val tokenProvider: ServiceTokenProvider,
+        ktorClientFactory: KtorClientFactory,
     ) {
         private val logger = LoggerFactory.getLogger(RadarClient::class.java)
         private val radarConfig = config.managementPortal

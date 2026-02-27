@@ -23,7 +23,8 @@ class DataSourcesApplication {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val config = try {
+            val config =
+                try {
                     ConfigLoader.loadConfig<DataSourcesServiceConfig>("config.yaml", args)
                 } catch (_: IllegalArgumentException) {
                     logger.error("No configuration file was found.")
@@ -40,7 +41,8 @@ class DataSourcesApplication {
 
             LoggingConfigurator(config.logging).apply(LoggingConfigurator::configure)
 
-            val resourceConfig = ResourceConfig()
+            val resourceConfig =
+                ResourceConfig()
                     .packages(
                         "org.radarbase.datasources.api",
                         "org.radarbase.datasources.service",

@@ -23,7 +23,6 @@ data class ConfigServiceConfig(
         val isJmxEnabled: Boolean = true,
     )
 
-
     data class ProviderConfig(
         val github: GithubProviderConfig = GithubProviderConfig(),
         val appConfig: AppConfigProviderConfig = AppConfigProviderConfig(),

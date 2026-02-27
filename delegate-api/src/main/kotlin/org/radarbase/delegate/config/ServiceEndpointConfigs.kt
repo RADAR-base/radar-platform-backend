@@ -10,4 +10,3 @@ data class ProjectServiceConfig(val baseUrl: String)
 data class ConfigServiceConfig(val baseUrl: String)
 
 data class DataSourcesServiceConfig(val baseUrl: String)
-

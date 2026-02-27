@@ -22,11 +22,13 @@ class LoggingConfigurator(
 
         rootLogger.level = Level.toLevel(config.level)
 
-        val fileAppender = FileAppender<ILoggingEvent>().apply {
+        val fileAppender =
+            FileAppender<ILoggingEvent>().apply {
                 context = loggerContext
                 name = "FILE"
                 file = config.file
-                encoder = PatternLayoutEncoder().apply {
+                encoder =
+                    PatternLayoutEncoder().apply {
                         context = loggerContext
                         pattern = config.pattern
                         start()
@@ -35,7 +37,6 @@ class LoggingConfigurator(
             }
 
         rootLogger.addAppender(fileAppender)
-
         rootLogger.info("Logging configured with level: ${config.level}, file: ${config.file}")
     }
 }

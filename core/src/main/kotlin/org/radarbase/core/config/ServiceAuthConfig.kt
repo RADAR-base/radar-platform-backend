@@ -9,5 +9,5 @@ data class ServiceAuthConfig(
     val clientSecret: String = "",
     val tokenEndpoint: String = "",
     val scope: String? = null,
-    val audience: String? = null
+    val audience: String? = null,
 )

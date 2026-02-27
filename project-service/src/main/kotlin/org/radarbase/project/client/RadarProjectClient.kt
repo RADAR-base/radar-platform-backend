@@ -36,7 +36,8 @@ class RadarProjectClient
         private val logger = LoggerFactory.getLogger(RadarProjectClient::class.java)
         private val radarConfig = config.radar
 
-        private val client = ktorClientFactory.createClient(
+        private val client =
+            ktorClientFactory.createClient(
                 baseUrl = radarConfig.baseUrl,
                 timeoutSeconds = radarConfig.timeout,
                 maxRetriesCount = radarConfig.maxRetries,
