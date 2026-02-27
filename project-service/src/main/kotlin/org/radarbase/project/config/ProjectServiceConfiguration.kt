@@ -7,15 +7,15 @@ import org.radarbase.jersey.enhancer.EnhancerFactory
 import org.radarbase.project.inject.ProjectJwtEnhancerFactory
 
 @Singleton
-data class ProjectServiceConfiguration (
-        override val radar: RadarConfiguration,
-        override val server: ServerConfiguration,
-        override val logging: LoggingConfig,
-        val serviceAuth: ServiceAuthConfig = ServiceAuthConfig(),
-    ) : BaseConfiguration {
-        val resourceConfig: Class<out EnhancerFactory> = ProjectJwtEnhancerFactory::class.java
+data class ProjectServiceConfiguration(
+    val radar: RadarConfiguration,
+    val server: ServerConfiguration,
+    val logging: LoggingConfig,
+    val serviceAuth: ServiceAuthConfig = ServiceAuthConfig(),
+) {
+    val resourceConfig: Class<out EnhancerFactory> = ProjectJwtEnhancerFactory::class.java
 
-        fun validate() {
-            // Add validation logic if needed
-        }
+    fun validate() {
+        // Add validation logic if needed
     }
+}

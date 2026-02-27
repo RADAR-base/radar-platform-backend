@@ -1,7 +1,7 @@
 package org.radarbase.delegate.service
 
-import org.radarbase.core.model.Group
-import org.radarbase.core.model.Project
+import org.radarbase.core.model.project.Group
+import org.radarbase.core.model.project.Project
 import org.radarbase.delegate.model.ProjectParticipant
 
 interface ProjectService {
