@@ -1,7 +1,7 @@
 package org.radarbase.config
 
 import org.radarbase.config.config.ConfigServiceConfig
-import org.radarbase.config.config.LoggingConfiguration
+import org.radarbase.core.logging.LoggingConfigurator
 import org.radarbase.jersey.GrizzlyServer
 import org.radarbase.jersey.config.ConfigLoader
 import org.slf4j.Logger
@@ -31,10 +31,8 @@ class ConfigServiceApplication {
                 exitProcess(1)
             }
 
-            // Configure logging
-            val loggingConfig = LoggingConfiguration(config)
-            loggingConfig.configure()
-
+            LoggingConfigurator(config.logging).apply(LoggingConfigurator::configure)
+            
             val resources = ConfigLoader.loadResources(config.resourceConfig, config)
 
             val server = GrizzlyServer(URI(config.server.baseUri), resources, config.server.isJmxEnabled)

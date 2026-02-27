@@ -1,6 +1,8 @@
 package org.radarbase.user.config
 
 import jakarta.inject.Singleton
+import org.radarbase.core.config.LoggingConfig
+import org.radarbase.core.config.ServiceAuthConfig
 import org.radarbase.jersey.enhancer.EnhancerFactory
 import org.radarbase.user.inject.UserJwtEnhancerFactory
 import java.net.URI
@@ -76,17 +78,4 @@ data class UserServiceConfig(
             val health: String = "/management/health",
         )
     }
-
-    data class LoggingConfig(
-        val level: String = "INFO",
-        val file: String = "logs/user-service.log",
-        val pattern: String = "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n",
-    )
-
-    data class ServiceAuthConfig(
-        val clientId: String = "",
-        val clientSecret: String = "",
-        val tokenEndpoint: String = "",
-        val scope: String? = null,
-    )
 }

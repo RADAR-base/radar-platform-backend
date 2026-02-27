@@ -16,9 +16,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.datasources.config.DataSourcesServiceConfig
 import org.radarbase.datasources.model.RestSourceUser
-import org.radarbase.datasources.service.ServiceTokenProvider
 import org.slf4j.LoggerFactory
 
 @Singleton

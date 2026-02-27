@@ -4,12 +4,13 @@ import org.glassfish.grizzly.http.server.HttpServer
 import org.glassfish.hk2.utilities.binding.AbstractBinder
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory
 import org.glassfish.jersey.server.ResourceConfig
+import org.radarbase.core.logging.LoggingConfigurator
+import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.datasources.client.RadarSourcesClient
 import org.radarbase.datasources.client.RestSourcesClient
 import org.radarbase.datasources.config.DataSourcesServiceConfig
 import org.radarbase.datasources.service.DataSourcesService
 import org.radarbase.datasources.service.DataSourcesServiceImpl
-import org.radarbase.datasources.service.ServiceTokenProvider
 import org.radarbase.jersey.config.ConfigLoader
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -22,8 +23,7 @@ class DataSourcesApplication {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val config =
-                try {
+            val config = try {
                     ConfigLoader.loadConfig<DataSourcesServiceConfig>("config.yaml", args)
                 } catch (ex: IllegalArgumentException) {
                     logger.error("No configuration file was found.")
@@ -38,8 +38,9 @@ class DataSourcesApplication {
                 exitProcess(1)
             }
 
-            val resourceConfig =
-                ResourceConfig()
+            LoggingConfigurator(config.logging).apply(LoggingConfigurator::configure)
+
+            val resourceConfig = ResourceConfig()
                     .packages(
                         "org.radarbase.datasources.api",
                         "org.radarbase.datasources.service",
@@ -48,7 +49,7 @@ class DataSourcesApplication {
                         object : AbstractBinder() {
                             override fun configure() {
                                 bind(config).to(DataSourcesServiceConfig::class.java)
-                                bind(ServiceTokenProvider::class.java).to(ServiceTokenProvider::class.java)
+                                bind(ServiceTokenProvider(config.serviceAuth)).to(ServiceTokenProvider::class.java)
                                 bind(RadarSourcesClient::class.java).to(RadarSourcesClient::class.java)
                                 bind(RestSourcesClient::class.java).to(RestSourcesClient::class.java)
                                 bind(DataSourcesServiceImpl::class.java).to(DataSourcesService::class.java)

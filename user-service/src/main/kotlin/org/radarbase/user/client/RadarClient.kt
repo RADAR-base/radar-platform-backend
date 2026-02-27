@@ -16,11 +16,11 @@ import jakarta.inject.Singleton
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.user.config.UserServiceConfig
 import org.radarbase.user.model.KratosSubjectWebhookDTO
 import org.radarbase.user.model.ManagementPortalProxyResponse
 import org.radarbase.user.model.RadarUser
-import org.radarbase.user.service.ServiceTokenProvider
 import org.slf4j.LoggerFactory
 
 @Singleton
@@ -28,8 +28,8 @@ class RadarClient
     @Inject
     constructor(
         private val config: UserServiceConfig,
-        ktorClientFactory: KtorClientFactory,
         private val tokenProvider: ServiceTokenProvider,
+        ktorClientFactory: KtorClientFactory,
     ) {
         private val logger = LoggerFactory.getLogger(RadarClient::class.java)
         private val radarConfig = config.managementPortal

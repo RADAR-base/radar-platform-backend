@@ -2,16 +2,16 @@ package org.radarbase.project.config
 
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import org.radarbase.core.config.LoggingConfig
+import org.radarbase.core.config.ServiceAuthConfig
 import org.radarbase.jersey.enhancer.EnhancerFactory
 import org.radarbase.project.inject.ProjectJwtEnhancerFactory
 
 @Singleton
-data class ProjectServiceConfiguration
-    @Inject
-    constructor(
+data class ProjectServiceConfiguration (
         override val radar: RadarConfiguration,
         override val server: ServerConfiguration,
-        override val logging: LoggingConfiguration,
+        override val logging: LoggingConfig,
         val serviceAuth: ServiceAuthConfig = ServiceAuthConfig(),
     ) : BaseConfiguration {
         val resourceConfig: Class<out EnhancerFactory> = ProjectJwtEnhancerFactory::class.java
@@ -19,11 +19,4 @@ data class ProjectServiceConfiguration
         fun validate() {
             // Add validation logic if needed
         }
-
-        data class ServiceAuthConfig(
-            val clientId: String = "",
-            val clientSecret: String = "",
-            val tokenEndpoint: String = "",
-            val scope: String? = null,
-        )
     }
