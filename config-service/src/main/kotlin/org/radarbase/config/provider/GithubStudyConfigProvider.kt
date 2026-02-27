@@ -69,32 +69,27 @@ class GithubStudyConfigProvider
 
         private fun rawUrl(path: String): String = "${githubConfig.baseUrl.trimEnd('/')}/$path"
 
-        private fun questionnaireContentsApiUrl(): String =
-            "https://api.github.com/repos/${githubConfig.questionnaireRepoOwner}/${githubConfig.questionnaireRepo}/contents"
+        private fun questionnaireContentsApiUrl(): String = "https://api.github.com/repos/${githubConfig.questionnaireRepoOwner}/${githubConfig.questionnaireRepo}/contents"
 
         private fun questionnaireRawUrl(path: String): String =
             "https://raw.githubusercontent.com/${githubConfig.questionnaireRepoOwner}/" +
                 "${githubConfig.questionnaireRepo}/${githubConfig.questionnaireRepoBranch}/$path"
 
-        private fun useProtocolRepo(): Boolean =
-            !githubConfig.protocolRepoOwner.isNullOrBlank() && !githubConfig.protocolRepo.isNullOrBlank()
+        private fun useProtocolRepo(): Boolean = !githubConfig.protocolRepoOwner.isNullOrBlank() && !githubConfig.protocolRepo.isNullOrBlank()
 
         private fun protocolBranch(): String = githubConfig.protocolRepoBranch?.takeIf { it.isNotBlank() } ?: githubConfig.branch
 
-        private fun protocolContentsApiUrl(): String =
-            "https://api.github.com/repos/${githubConfig.protocolRepoOwner!!.trim()}/${githubConfig.protocolRepo!!.trim()}/contents"
+        private fun protocolContentsApiUrl(): String = "https://api.github.com/repos/${githubConfig.protocolRepoOwner!!.trim()}/${githubConfig.protocolRepo!!.trim()}/contents"
 
         private fun protocolRawUrl(path: String): String =
             "https://raw.githubusercontent.com/${githubConfig.protocolRepoOwner!!.trim()}/" +
                 "${githubConfig.protocolRepo!!.trim()}/${protocolBranch()}/$path"
 
-        private fun useEnrolmentRepo(): Boolean =
-            !githubConfig.enrolmentRepoOwner.isNullOrBlank() && !githubConfig.enrolmentRepo.isNullOrBlank()
+        private fun useEnrolmentRepo(): Boolean = !githubConfig.enrolmentRepoOwner.isNullOrBlank() && !githubConfig.enrolmentRepo.isNullOrBlank()
 
         private fun enrolmentBranch(): String = githubConfig.enrolmentRepoBranch?.takeIf { it.isNotBlank() } ?: githubConfig.branch
 
-        private fun enrolmentContentsApiUrl(): String =
-            "https://api.github.com/repos/${githubConfig.enrolmentRepoOwner!!.trim()}/${githubConfig.enrolmentRepo!!.trim()}/contents"
+        private fun enrolmentContentsApiUrl(): String = "https://api.github.com/repos/${githubConfig.enrolmentRepoOwner!!.trim()}/${githubConfig.enrolmentRepo!!.trim()}/contents"
 
         private suspend fun getEnrolmentFileSha(path: String): String? {
             val token = githubConfig.token ?: return null

@@ -42,7 +42,9 @@ class ProjectHealthMetric(
                 HealthService.Status.DOWN
             }
 
-            else -> HealthService.Status.UP
+            else -> {
+                HealthService.Status.UP
+            }
         }
     }
 }

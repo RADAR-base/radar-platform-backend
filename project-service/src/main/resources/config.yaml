@@ -18,9 +18,9 @@ server:
   host: "0.0.0.0"
   cors:
     enabled: true
-    allowedOrigins: ["*"]
-    allowedMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    allowedHeaders: ["Authorization", "Content-Type"]
+    allowedOrigins: [ "*" ]
+    allowedMethods: [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+    allowedHeaders: [ "Authorization", "Content-Type" ]
 
 logging:
   level: "INFO"

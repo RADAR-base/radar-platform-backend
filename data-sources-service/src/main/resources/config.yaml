@@ -54,7 +54,7 @@ sources:
     dataTypes:
       - questionnaire_responses
       - speech_task
-  
+
   - id: healthkit
     name: HealthKit
     category: mobile

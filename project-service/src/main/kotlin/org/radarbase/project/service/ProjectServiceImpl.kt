@@ -89,8 +89,7 @@ class ProjectServiceImpl
                     ),
             )
 
-        override suspend fun getProjects(authToken: String?): List<Project> =
-            radarProjectClient.getProjects(authToken).map { it.toProject() }
+        override suspend fun getProjects(authToken: String?): List<Project> = radarProjectClient.getProjects(authToken).map { it.toProject() }
 
         override suspend fun getProject(
             projectId: Long,
