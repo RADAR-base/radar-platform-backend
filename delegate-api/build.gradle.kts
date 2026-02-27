@@ -1,4 +1,5 @@
 dependencies {
+    implementation(project(":core"))
     implementation(project(":user-service"))
     implementation(project(":data-sources-service"))
     implementation(project(":project-service"))

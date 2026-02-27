@@ -1,5 +1,6 @@
 rootProject.name = "platform-backend"
 
+include(":core")
 include(":delegate-api")
 include(":user-service")
 include(":data-sources-service")
