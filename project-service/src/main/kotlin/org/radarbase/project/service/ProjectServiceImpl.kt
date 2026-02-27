@@ -2,10 +2,20 @@ package org.radarbase.project.service
 
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import org.radarbase.core.model.AgeRange
+import org.radarbase.core.model.Analysis
+import org.radarbase.core.model.Contact
+import org.radarbase.core.model.Design
+import org.radarbase.core.model.Domain
+import org.radarbase.core.model.Eligibility
+import org.radarbase.core.model.Group
+import org.radarbase.core.model.Intervention
+import org.radarbase.core.model.Outcomes
+import org.radarbase.core.model.Population
+import org.radarbase.core.model.Project
+import org.radarbase.core.model.Technology
 import org.radarbase.project.client.RadarProjectClient
 import org.radarbase.project.model.CreateGroupRequest
-import org.radarbase.project.model.Group
-import org.radarbase.project.model.Project
 import org.radarbase.project.model.ProjectParticipant
 import org.radarbase.project.model.RadarProject
 
@@ -27,53 +37,53 @@ class ProjectServiceImpl
                 endDate = endDate ?: "",
                 location = location ?: "",
                 population =
-                    org.radarbase.project.model.Population(
+                    Population(
                         ageRange =
-                            org.radarbase.project.model.AgeRange(
+                            AgeRange(
                                 min = 0,
                                 max = 0,
                             ),
                         maxParticipants = 0,
                     ),
                 domain =
-                    org.radarbase.project.model.Domain(
+                    Domain(
                         area = "",
                         keywords = emptyList(),
                     ),
                 eligibility =
-                    org.radarbase.project.model.Eligibility(
+                    Eligibility(
                         inclusion = emptyList(),
                         exclusion = emptyList(),
                     ),
                 design =
-                    org.radarbase.project.model.Design(
+                    Design(
                         phases = emptyList(),
                         measurements = emptyList(),
                         intervention =
-                            org.radarbase.project.model.Intervention(
+                            Intervention(
                                 description = "",
                                 deliveryModes = emptyList(),
                             ),
                         outcomes =
-                            org.radarbase.project.model.Outcomes(
+                            Outcomes(
                                 primary = emptyList(),
                                 secondary = emptyList(),
                             ),
                     ),
                 technology =
-                    org.radarbase.project.model.Technology(
+                    Technology(
                         devices = emptyList(),
                         dataTypes = emptyList(),
                         frequency = "",
                         notes = null,
                     ),
                 analysis =
-                    org.radarbase.project.model.Analysis(
+                    Analysis(
                         features = emptyList(),
                         visualizations = emptyList(),
                     ),
                 contact =
-                    org.radarbase.project.model.Contact(
+                    Contact(
                         email = "",
                         resources = emptyList(),
                     ),

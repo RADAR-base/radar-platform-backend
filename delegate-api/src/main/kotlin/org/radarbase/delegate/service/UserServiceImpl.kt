@@ -11,7 +11,7 @@ class UserServiceImpl
     @Inject
     constructor(
         private val httpClient: HttpClientService,
-        private val config: DelegateConfig,
+        config: DelegateConfig,
     ) : UserService {
         private val logger = LoggerFactory.getLogger(UserServiceImpl::class.java)
         private val baseUrl = config.userService.baseUrl

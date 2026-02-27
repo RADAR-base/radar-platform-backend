@@ -25,7 +25,7 @@ class DataSourcesApplication {
         fun main(args: Array<String>) {
             val config = try {
                     ConfigLoader.loadConfig<DataSourcesServiceConfig>("config.yaml", args)
-                } catch (ex: IllegalArgumentException) {
+                } catch (_: IllegalArgumentException) {
                     logger.error("No configuration file was found.")
                     logger.error("Usage: data-sources-service <config-file>")
                     exitProcess(1)

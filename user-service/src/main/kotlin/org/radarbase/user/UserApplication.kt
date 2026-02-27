@@ -17,7 +17,7 @@ class UserApplication {
         fun main(args: Array<String>) {
             val config = try {
                     ConfigLoader.loadConfig<UserServiceConfig>("config.yaml", args)
-                } catch (ex: IllegalArgumentException) {
+                } catch (_: IllegalArgumentException) {
                     logger.error("No configuration file was found.")
                     logger.error("Usage: user-service <config-file>")
                     exitProcess(1)

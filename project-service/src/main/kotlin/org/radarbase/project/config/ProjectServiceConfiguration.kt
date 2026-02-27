@@ -1,6 +1,5 @@
 package org.radarbase.project.config
 
-import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.radarbase.core.config.LoggingConfig
 import org.radarbase.core.config.ServiceAuthConfig

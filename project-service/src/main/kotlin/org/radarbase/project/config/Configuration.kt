@@ -1,12 +1,13 @@
 package org.radarbase.project.config
 
 import jakarta.inject.Singleton
+import org.radarbase.core.config.LoggingConfig
 
 @Singleton
 interface BaseConfiguration {
     val radar: RadarConfiguration
     val server: ServerConfiguration
-    val logging: LoggingConfiguration
+    val logging: LoggingConfig
 }
 
 data class RadarConfiguration(
@@ -36,9 +37,3 @@ data class ServerConfiguration(
         val allowedHeaders: List<String>,
     )
 }
-
-data class LoggingConfiguration(
-    val level: String = "INFO",
-    val file: String = "logs/project-service.log",
-    val format: String = "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n",
-)

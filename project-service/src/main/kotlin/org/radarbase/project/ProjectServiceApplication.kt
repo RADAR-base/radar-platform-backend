@@ -17,7 +17,7 @@ class ProjectServiceApplication {
         fun main(args: Array<String>) {
             val config = try {
                     ConfigLoader.loadConfig<ProjectServiceConfiguration>("config.yaml", args)
-                } catch (ex: IllegalArgumentException) {
+                } catch (_: IllegalArgumentException) {
                     logger.error("No configuration file was found.")
                     logger.error("Usage: project-service <config-file>")
                     exitProcess(1)

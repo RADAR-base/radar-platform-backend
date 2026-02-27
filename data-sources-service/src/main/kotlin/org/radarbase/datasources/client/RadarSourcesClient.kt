@@ -11,7 +11,6 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.datasources.config.DataSourcesServiceConfig
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory
 class RadarSourcesClient
     @Inject
     constructor(
-        private val config: DataSourcesServiceConfig,
+        config: DataSourcesServiceConfig,
         private val tokenProvider: ServiceTokenProvider,
     ) {
         private val logger = LoggerFactory.getLogger(RadarSourcesClient::class.java)

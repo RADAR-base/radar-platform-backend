@@ -2,9 +2,9 @@ package org.radarbase.delegate.service
 
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import org.radarbase.core.model.Group
+import org.radarbase.core.model.Project
 import org.radarbase.delegate.config.DelegateConfig
-import org.radarbase.delegate.model.Group
-import org.radarbase.delegate.model.Project
 import org.radarbase.delegate.model.ProjectParticipant
 import org.slf4j.LoggerFactory
 
