@@ -13,7 +13,7 @@ class ProjectServiceImpl
     @Inject
     constructor(
         private val httpClient: HttpClientService,
-        private val config: DelegateConfig,
+        config: DelegateConfig,
     ) : ProjectService {
         private val logger = LoggerFactory.getLogger(ProjectServiceImpl::class.java)
         private val baseUrl = config.projectService.baseUrl

@@ -24,9 +24,7 @@ import org.radarbase.user.model.RadarUser
 import org.slf4j.LoggerFactory
 
 @Singleton
-class RadarClient
-    @Inject
-    constructor(
+class RadarClient @Inject constructor(
         private val config: UserServiceConfig,
         private val tokenProvider: ServiceTokenProvider,
         ktorClientFactory: KtorClientFactory,

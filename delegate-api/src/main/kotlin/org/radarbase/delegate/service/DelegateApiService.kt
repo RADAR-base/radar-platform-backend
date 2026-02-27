@@ -8,7 +8,6 @@ import org.radarbase.delegate.model.Participant
 import org.radarbase.delegate.model.ProjectParticipant
 import org.radarbase.delegate.model.User
 import org.radarbase.jersey.service.ProjectService
-import org.slf4j.LoggerFactory
 
 @Singleton
 class DelegateApiService
@@ -21,7 +20,6 @@ class DelegateApiService
         private val configService: ConfigService,
         private val dataSourcesService: DataSourcesService,
     ) {
-        private val logger = LoggerFactory.getLogger(DelegateApiService::class.java)
         private val userCache = Cache<List<User>>(10L)
         private val participantCache = Cache<List<Participant>>(10L)
 
