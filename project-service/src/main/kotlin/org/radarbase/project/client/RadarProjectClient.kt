@@ -26,8 +26,7 @@ import org.radarbase.project.model.RadarProject
 import org.slf4j.LoggerFactory
 
 @Singleton
-class RadarProjectClient
-@Inject constructor(
+class RadarProjectClient @Inject constructor(
     private val serviceTokenProvider: ServiceTokenProvider,
     config: ProjectServiceConfiguration,
     ktorClientFactory: KtorClientFactory,
@@ -57,7 +56,7 @@ class RadarProjectClient
     }
 
     suspend fun getProjects(authToken: String? = null): List<RadarProject> {
-        logger.info("Fetching all projects from RADAR")
+        logger.debug("Fetching all projects from RADAR")
         return try {
             val token = authToken ?: serviceTokenProvider.getToken()
             client.get {
