@@ -25,24 +25,19 @@ import org.radarbase.user.model.UserDTO
 import org.radarbase.user.service.CombinedUser
 import org.radarbase.user.service.UserService
 import org.slf4j.LoggerFactory
-import kotlin.time.DurationUnit.SECONDS
-import kotlin.time.toDuration
+import kotlin.time.Duration.Companion.seconds
 
 @Path("/user-service")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Singleton
-class UserResource
-@Inject
-constructor(
+class UserResource @Inject constructor(
     private val userService: UserService,
     private val asyncCoroutineService: AsyncCoroutineService,
-    private val config: UserServiceConfig,
+    config: UserServiceConfig,
 ) {
     private val logger = LoggerFactory.getLogger(UserResource::class.java)
-    private val timeout =
-        config.server.requestTimeout.seconds
-            .toDuration(SECONDS)
+    private val timeout = config.server.requestTimeout.seconds
 
     @GET
     @Path("/project/{projectId}/users")
