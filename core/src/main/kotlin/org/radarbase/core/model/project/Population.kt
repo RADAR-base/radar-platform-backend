@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class Population(
     val ageRange: AgeRange,
     val maxParticipants: Int,
+    val location: String? = null,
 )
 
 @Serializable

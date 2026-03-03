@@ -21,7 +21,7 @@ import org.radarbase.core.util.KtorClientFactory
 import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.project.config.ProjectServiceConfiguration
 import org.radarbase.project.model.CreateGroupRequest
-import org.radarbase.project.model.ProjectParticipant
+import org.radarbase.core.model.project.participant.ProjectParticipant
 import org.radarbase.project.model.RadarProject
 import org.slf4j.LoggerFactory
 
