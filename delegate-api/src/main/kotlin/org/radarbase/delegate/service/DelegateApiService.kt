@@ -2,11 +2,16 @@ package org.radarbase.delegate.service
 
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import org.radarbase.core.model.project.Group
-import org.radarbase.core.model.project.Project
+import org.radarbase.contract.response.ProxyResponse
+import org.radarbase.contract.service.ConfigServiceContract
+import org.radarbase.contract.service.DataSourcesServiceContract
+import org.radarbase.contract.service.ParticipantServiceContract
+import org.radarbase.contract.service.ProjectServiceContract
+import org.radarbase.contract.service.UserServiceContract
+import org.radarbase.contract.utils.ContractUtils.deserializeDtoFromContract
+import org.radarbase.core.model.user.User
+import org.radarbase.delegate.config.DelegateConfig
 import org.radarbase.delegate.model.Participant
-import org.radarbase.delegate.model.ProjectParticipant
-import org.radarbase.delegate.model.User
 import org.radarbase.jersey.service.ProjectService
 
 @Singleton
@@ -14,249 +19,172 @@ class DelegateApiService
 @Inject
 constructor(
     private val projectService: ProjectService,
-    private val delegateProjectService: org.radarbase.delegate.service.ProjectService,
-    private val userService: UserService,
-    private val participantService: ParticipantService,
-    private val configService: ConfigService,
-    private val dataSourcesService: DataSourcesService,
+    private val config: DelegateConfig,
 ) {
     private val userCache = Cache<List<User>>(10L)
     private val participantCache = Cache<List<Participant>>(10L)
 
-    suspend fun getUsers(
-        projectId: String,
-        authToken: String?,
-    ): List<User> {
+    // ------------------------------------------------------------------ //
+    //  User Service
+    // ------------------------------------------------------------------ //
+
+    suspend fun getUsers(projectId: String, authToken: String?): List<User> {
         projectService.ensureProject(projectId)
         return userCache.withCache(
             cacheKey = "users:$projectId",
-            fetchData = { userService.getUsers(projectId, authToken) },
+            fetchData = {
+                UserServiceContract.getUsers(config.contract.user, projectId, authToken).let {
+                    deserializeDtoFromContract<List<User>>(it) {
+                        "users_not_found ; Users not found for project $projectId"
+                    }
+                }
+            },
             logMessage = "Returning cached users for project $projectId",
         )
     }
 
-    suspend fun getUser(
-        projectId: String,
-        userId: String,
-        authToken: String?,
-    ): User? {
+    suspend fun getUser(projectId: String, userId: String, authToken: String?): User? {
         projectService.ensureProject(projectId)
         return getUsers(projectId, authToken).find { it.id == userId }
     }
 
-    suspend fun createUser(
-        projectId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> {
+    suspend fun createUser(projectId: String, body: String, authToken: String?): ProxyResponse {
         projectService.ensureProject(projectId)
-        val result = userService.createUser(projectId, body, authToken)
-        userCache.clearCache("users:$projectId")
-        return result
+        return UserServiceContract.createUser(config.contract.user, projectId, body, authToken)
+            .also { userCache.clearCache("users:$projectId") }
     }
 
-    suspend fun updateUser(
-        projectId: String,
-        userId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> {
+    suspend fun updateUser(projectId: String, userId: String, body: String, authToken: String?): ProxyResponse {
         projectService.ensureProject(projectId)
-        val result = userService.updateUser(projectId, userId, body, authToken)
-        userCache.clearCache("users:$projectId")
-        return result
+        return UserServiceContract.updateUser(config.contract.user, projectId, userId, body, authToken)
+            .also { userCache.clearCache("users:$projectId") }
     }
 
-    suspend fun getParticipants(
-        projectId: String,
-        authToken: String?,
-    ): List<Participant> {
-        projectId.let { projectService.ensureProject(it) }
+    suspend fun getParticipants(projectId: String, authToken: String?): List<Participant> {
+        projectService.ensureProject(projectId)
         return participantCache.withCache(
-            cacheKey = "projectId",
-            fetchData = { participantService.getParticipants(projectId, authToken) },
+            cacheKey = "participants:$projectId",
+            fetchData = {
+                ParticipantServiceContract.getParticipants(config.contract.participant, projectId, authToken).let {
+                    deserializeDtoFromContract<List<Participant>>(it) {
+                        "participants_not_found ; Participants not found for project $projectId"
+                    }
+                }
+            },
             logMessage = "Returning cached participants for project $projectId",
         )
     }
 
-    suspend fun getParticipant(
-        projectId: String,
-        participantId: String,
-        authToken: String?,
-    ): Participant? {
+    suspend fun getParticipant(projectId: String, participantId: String, authToken: String?): Participant? {
         projectService.ensureProject(projectId)
         return getParticipants(projectId, authToken).find { it.id == participantId }
     }
 
-    suspend fun createParticipant(
-        projectId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> {
+    suspend fun createParticipant(projectId: String, body: String, authToken: String?): ProxyResponse {
         projectService.ensureProject(projectId)
-        val result = participantService.createParticipant(projectId, body, authToken)
-        participantCache.clearCache("projectId")
-        return result
+        return ParticipantServiceContract.createParticipant(config.contract.participant, projectId, body, authToken)
+            .also { participantCache.clearCache("participants:$projectId") }
     }
 
-    suspend fun updateParticipant(
-        projectId: String,
-        participantId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> {
+    suspend fun updateParticipant(projectId: String, participantId: String, body: String, authToken: String?): ProxyResponse {
         projectService.ensureProject(projectId)
-        val result = participantService.updateParticipant(projectId, participantId, body, authToken)
-        participantCache.clearCache("projectId")
-        return result
+        return ParticipantServiceContract.updateParticipant(config.contract.participant, projectId, participantId, body, authToken)
+            .also { participantCache.clearCache("participants:$projectId") }
     }
 
-    suspend fun getProjects(authToken: String?): List<Project> = delegateProjectService.getProjects(authToken)
+    // ------------------------------------------------------------------ //
+    //  Project Service
+    // ------------------------------------------------------------------ //
 
-    suspend fun getProject(
-        projectId: String,
-        authToken: String?,
-    ): Project? = delegateProjectService.getProject(projectId, authToken)
+    suspend fun getProjects(authToken: String?): ProxyResponse =
+        ProjectServiceContract.getProjects(config.contract.project, authToken)
 
-    suspend fun getProjectParticipants(
-        projectId: String,
-        authToken: String?,
-    ): List<ProjectParticipant> = delegateProjectService.getProjectParticipants(projectId, authToken)
+    suspend fun getProject(projectId: String, authToken: String?): ProxyResponse =
+        ProjectServiceContract.getProject(config.contract.project, projectId, authToken)
 
-    suspend fun getProjectParticipant(
-        projectId: String,
-        participantId: String,
-        authToken: String?,
-    ): ProjectParticipant? = delegateProjectService.getProjectParticipant(projectId, participantId, authToken)
+    suspend fun getProjectParticipants(projectId: String, authToken: String?): ProxyResponse =
+        ProjectServiceContract.getProjectParticipants(config.contract.project, projectId, authToken)
 
-    suspend fun listGroups(
-        projectName: String,
-        authToken: String?,
-    ): List<Group> {
+    suspend fun getProjectParticipant(projectId: String, participantId: String, authToken: String?): ProxyResponse =
+        ProjectServiceContract.getProjectParticipant(config.contract.project, projectId, participantId, authToken)
+
+    suspend fun listGroups(projectName: String, authToken: String?): ProxyResponse {
         projectService.ensureProject(projectName)
-        return delegateProjectService.listGroups(projectName, authToken)
+        return ProjectServiceContract.listGroups(config.contract.project, projectName, authToken)
     }
 
-    suspend fun createGroup(
-        projectName: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> {
+    suspend fun createGroup(projectName: String, body: String, authToken: String?): ProxyResponse {
         projectService.ensureProject(projectName)
-        return delegateProjectService.createGroup(projectName, body, authToken)
+        return ProjectServiceContract.createGroup(config.contract.project, projectName, body, authToken)
     }
 
-    suspend fun deleteGroup(
-        projectName: String,
-        groupName: String,
-        unlinkSubjects: Boolean,
-        authToken: String?,
-    ): Pair<Int, String> {
+    suspend fun deleteGroup(projectName: String, groupName: String, unlinkSubjects: Boolean, authToken: String?): ProxyResponse {
         projectService.ensureProject(projectName)
-        return delegateProjectService.deleteGroup(projectName, groupName, unlinkSubjects, authToken)
+        return ProjectServiceContract.deleteGroup(config.contract.project, projectName, groupName, unlinkSubjects, authToken)
     }
 
-    suspend fun getStudyConfig(
-        projectId: String,
-        authToken: String?,
-    ): String = configService.getStudyConfig(projectId, authToken)
+    // ------------------------------------------------------------------ //
+    //  Config Service
+    // ------------------------------------------------------------------ //
 
-    suspend fun getProtocol(
-        projectId: String,
-        authToken: String?,
-    ): String = configService.getProtocol(projectId, authToken)
+    suspend fun getStudyConfig(projectId: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.getStudyConfig(config.contract.config, projectId, authToken)
 
-    suspend fun getEnrolmentSource(
-        projectId: String,
-        authToken: String?,
-    ): String = configService.getEnrolmentSource(projectId, authToken)
+    suspend fun getProtocol(projectId: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.getProtocol(config.contract.config, projectId, authToken)
 
-    suspend fun getEnrolmentLanding(
-        projectId: String,
-        authToken: String?,
-    ): String = configService.getEnrolmentLanding(projectId, authToken)
+    suspend fun getEnrolmentSource(projectId: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.getEnrolmentSource(config.contract.config, projectId, authToken)
 
-    suspend fun getEnrolmentProtocol(
-        projectId: String,
-        authToken: String?,
-    ): String = configService.getEnrolmentProtocol(projectId, authToken)
+    suspend fun getEnrolmentLanding(projectId: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.getEnrolmentLanding(config.contract.config, projectId, authToken)
 
-    suspend fun getQuestionnaires(
-        projectId: String,
-        authToken: String?,
-    ): String = configService.getQuestionnaires(projectId, authToken)
+    suspend fun getEnrolmentProtocol(projectId: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.getEnrolmentProtocol(config.contract.config, projectId, authToken)
 
-    suspend fun getQuestionnaire(
-        projectId: String,
-        questionnaireId: String,
-        authToken: String?,
-    ): String = configService.getQuestionnaire(projectId, questionnaireId, authToken)
+    suspend fun getQuestionnaires(projectId: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.getQuestionnaires(config.contract.config, projectId, authToken)
 
-    suspend fun updateStudyConfig(
-        projectId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> = configService.updateStudyConfig(projectId, body, authToken)
+    suspend fun getQuestionnaire(projectId: String, questionnaireId: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.getQuestionnaire(config.contract.config, projectId, questionnaireId, authToken)
 
-    suspend fun updateQuestionnaires(
-        projectId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> = configService.updateQuestionnaires(projectId, body, authToken)
+    suspend fun updateStudyConfig(projectId: String, body: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.updateStudyConfig(config.contract.config, projectId, body, authToken)
 
-    suspend fun createQuestionnaire(
-        projectId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> = configService.createQuestionnaire(projectId, body, authToken)
+    suspend fun updateQuestionnaires(projectId: String, body: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.updateQuestionnaires(config.contract.config, projectId, body, authToken)
 
-    suspend fun updateQuestionnaire(
-        projectId: String,
-        questionnaireId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> = configService.updateQuestionnaire(projectId, questionnaireId, body, authToken)
+    suspend fun createQuestionnaire(projectId: String, body: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.createQuestionnaire(config.contract.config, projectId, body, authToken)
 
-    suspend fun deleteQuestionnaire(
-        projectId: String,
-        questionnaireId: String,
-        authToken: String?,
-    ): Pair<Int, String> = configService.deleteQuestionnaire(projectId, questionnaireId, authToken)
+    suspend fun updateQuestionnaire(projectId: String, questionnaireId: String, body: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.updateQuestionnaire(config.contract.config, projectId, questionnaireId, body, authToken)
 
-    suspend fun updateProtocolSource(
-        projectId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> = configService.updateProtocolSource(projectId, body, authToken)
+    suspend fun deleteQuestionnaire(projectId: String, questionnaireId: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.deleteQuestionnaire(config.contract.config, projectId, questionnaireId, authToken)
 
-    suspend fun updateProtocolBody(
-        projectId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> = configService.updateProtocolBody(projectId, body, authToken)
+    suspend fun updateProtocolSource(projectId: String, body: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.updateProtocolSource(config.contract.config, projectId, body, authToken)
 
-    suspend fun updateEnrolmentSource(
-        projectId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> = configService.updateEnrolmentSource(projectId, body, authToken)
+    suspend fun updateProtocolBody(projectId: String, body: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.updateProtocolBody(config.contract.config, projectId, body, authToken)
 
-    suspend fun updateEnrolmentLandingBody(
-        projectId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> = configService.updateEnrolmentLandingBody(projectId, body, authToken)
+    suspend fun updateEnrolmentSource(projectId: String, body: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.updateEnrolmentSource(config.contract.config, projectId, body, authToken)
 
-    suspend fun updateEnrolmentProtocolBody(
-        projectId: String,
-        body: String,
-        authToken: String?,
-    ): Pair<Int, String> = configService.updateEnrolmentProtocolBody(projectId, body, authToken)
+    suspend fun updateEnrolmentLandingBody(projectId: String, body: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.updateEnrolmentLandingBody(config.contract.config, projectId, body, authToken)
 
-    suspend fun getSourceCatalog(): String = dataSourcesService.getSourceCatalog()
+    suspend fun updateEnrolmentProtocolBody(projectId: String, body: String, authToken: String?): ProxyResponse =
+        ConfigServiceContract.updateEnrolmentProtocolBody(config.contract.config, projectId, body, authToken)
 
-    suspend fun getParticipantSources(
-        projectId: String,
-        participantId: String,
-    ): String = dataSourcesService.getParticipantSources(projectId, participantId)
+    // ------------------------------------------------------------------ //
+    //  Data Sources Service
+    // ------------------------------------------------------------------ //
+
+    suspend fun getSourceCatalog(): ProxyResponse =
+        DataSourcesServiceContract.getSourceCatalog(config.contract.dataSources)
+
+    suspend fun getParticipantSources(projectId: String, participantId: String): ProxyResponse =
+        DataSourcesServiceContract.getParticipantSources(config.contract.dataSources, projectId, participantId)
 }
