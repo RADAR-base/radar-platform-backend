@@ -7,19 +7,11 @@ auth:
     "http://hydra-public:4444/.well-known/jwks.json"
   ]
 
-userService:
-  baseUrl: http://localhost:8081/user-service
-
-participantService:
-  baseUrl: http://localhost:8081/user-service
-
-projectService:
-  baseUrl: http://localhost:8082/project-service
-
-configService:
-  baseUrl: http://localhost:8083/config-service
-
-dataSourcesService:
-  baseUrl: http://localhost:8084/data-sources-service
+contract:
+  user: http://localhost:8081/user-service
+  participant: http://localhost:8081/user-service
+  project: http://localhost:8082/project-service
+  config: http://localhost:8083/config-service
+  dataSources: http://localhost:8084/data-sources-service
 
 

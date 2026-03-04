@@ -19,6 +19,7 @@ package org.radarbase.contract.utils
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
+import io.ktor.client.plugins.ResponseException
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import jakarta.ws.rs.core.HttpHeaders
@@ -114,6 +115,7 @@ object ContractUtils {
      * Asserts that a [ProxyResponse] has a 2xx status.
      * Throws [ProxyResponseException] otherwise, preserving the upstream status.
      */
+    @Suppress("unused")
     fun checkProxyResponse(proxyResponse: ProxyResponse, caller: String) {
         if (proxyResponse.isSuccess) return
         val message = proxyResponse.body?.decodeToString()?.takeIf { it.isNotBlank() }
@@ -148,15 +150,15 @@ object ContractUtils {
         crossinline request: suspend () -> ProxyResponse,
     ): ProxyResponse = runCatching {
         request()
-    }.getOrElse { throwable ->
+    }.getOrElse { ex ->
         logger.error(
             "Proxy request failed for caller ({}) -> {} : {}",
             caller,
-            throwable::class.simpleName,
-            throwable.message,
+            ex::class.simpleName,
+            ex.message,
         )
-        when (throwable) {
-            is CancellationException -> throw throwable
+        when (ex) {
+            is CancellationException -> throw ex
 
             is HttpRequestTimeoutException, is SocketTimeoutException ->
                 ProxyResponse(
@@ -172,8 +174,8 @@ object ContractUtils {
                     body = """{"error":"bad_gateway","message":"cannot reach upstream"}""".toByteArray(),
                 )
 
-            is io.ktor.client.plugins.ResponseException -> runCatching {
-                val er = throwable.response
+            is ResponseException -> runCatching {
+                val er = ex.response
                 ProxyResponse(
                     status = er.status.value,
                     contentType = er.headers["Content-Type"],
@@ -195,10 +197,9 @@ object ContractUtils {
         }
     }
 
-    /** Normalises a URI base, stripping any trailing slash. */
     fun normalizedUri(uri: String): String = uri.trimEnd('/')
 
-    /** Normalises a path segment, ensuring a leading slash and no trailing one. */
+    @Suppress("unused")
     fun normalizedPath(path: String?): String {
         val trimmed = path?.trim().orEmpty()
         if (trimmed.isBlank()) return ""
