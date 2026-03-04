@@ -1,10 +1,13 @@
 package org.radarbase.user.api
 
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import jakarta.ws.rs.container.AsyncResponse
 import jakarta.ws.rs.core.Application
 import jakarta.ws.rs.core.HttpHeaders
 import jakarta.ws.rs.core.Response
+import kotlinx.coroutines.runBlocking
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.glassfish.jersey.server.ResourceConfig
 import org.glassfish.jersey.test.JerseyTest
@@ -19,6 +22,7 @@ import org.radarbase.user.config.UserServiceConfig
 import org.radarbase.user.resource.UserResource
 import org.radarbase.user.service.CombinedUser
 import org.radarbase.user.service.UserService
+import kotlin.time.Duration
 
 class UserResourceTest : JerseyTest() {
     private lateinit var userService: UserService
@@ -27,7 +31,21 @@ class UserResourceTest : JerseyTest() {
 
     override fun configure(): Application {
         userService = mockk(relaxed = true)
-        val asyncCoroutineService = mockk<AsyncCoroutineService>(relaxed = true)
+        val asyncCoroutineService = mockk<AsyncCoroutineService>()
+
+        // Stub runAsCoroutine to actually execute the block and resume the AsyncResponse,
+        // otherwise the Grizzly test client will hang forever waiting for a response.
+        every { asyncCoroutineService.runAsCoroutine<Any?>(any(), any(), any()) } answers {
+            val asyncResponse = firstArg<AsyncResponse>()
+            val block = thirdArg<suspend () -> Any?>()
+            try {
+                val result = runBlocking { block() }
+                asyncResponse.resume(result)
+            } catch (e: Exception) {
+                asyncResponse.resume(e)
+            }
+        }
+
         val config = mockk<UserServiceConfig>(relaxed = true)
 
         return ResourceConfig(UserResource::class.java)
