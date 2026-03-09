@@ -16,7 +16,7 @@ import org.radarbase.core.model.project.Project
 import org.radarbase.core.model.project.Technology
 import org.radarbase.project.client.RadarProjectClient
 import org.radarbase.project.model.CreateGroupRequest
-import org.radarbase.project.model.ProjectParticipant
+import org.radarbase.core.model.project.participant.ProjectParticipant
 import org.radarbase.project.model.RadarProject
 
 @Singleton

@@ -16,6 +16,8 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import kotlinx.coroutines.runBlocking
 import org.radarbase.auth.authorization.Permission
+import org.radarbase.contract.response.ProxyResponse
+import org.radarbase.contract.utils.ContractUtils.toJakartaResponse
 import org.radarbase.delegate.service.DelegateApiService
 import org.radarbase.delegate.service.DelegateHealthMetric
 import org.radarbase.jersey.auth.Authenticated
@@ -29,6 +31,10 @@ class DelegateResource {
     @Inject
     lateinit var apiService: DelegateApiService
 
+    // ------------------------------------------------------------------ //
+    //  Health
+    // ------------------------------------------------------------------ //
+
     @GET
     @Path("/health")
     @Produces(MediaType.APPLICATION_JSON)
@@ -38,6 +44,10 @@ class DelegateResource {
     @Path("/health/status")
     @Produces(MediaType.APPLICATION_JSON)
     fun healthStatus(): Response = Response.ok(runBlocking { healthMetric.computeStatus() }).build()
+
+    // ------------------------------------------------------------------ //
+    //  Users
+    // ------------------------------------------------------------------ //
 
     @Authenticated
     @NeedsPermission(Permission.PROJECT_READ)
@@ -51,8 +61,7 @@ class DelegateResource {
         if (projectId == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Project ID is required").build()
         }
-        val authToken = extractToken(httpHeaders)
-        return Response.ok(runBlocking { apiService.getUsers(projectId, authToken) }).build()
+        return Response.ok(runBlocking { apiService.getUsers(projectId, extractToken(httpHeaders)) }).build()
     }
 
     @Authenticated
@@ -68,8 +77,7 @@ class DelegateResource {
         if (projectId == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Project ID is required").build()
         }
-        val authToken = extractToken(httpHeaders)
-        return Response.ok(runBlocking { apiService.getUser(projectId, userId, authToken) }).build()
+        return Response.ok(runBlocking { apiService.getUser(projectId, userId, extractToken(httpHeaders)) }).build()
     }
 
     @Authenticated
@@ -86,9 +94,7 @@ class DelegateResource {
         if (projectId == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Project ID is required").build()
         }
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.createUser(projectId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
+        return runBlocking { apiService.createUser(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
     }
 
     @Authenticated
@@ -106,10 +112,12 @@ class DelegateResource {
         if (projectId == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Project ID is required").build()
         }
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.updateUser(projectId, userId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
+        return runBlocking { apiService.updateUser(projectId, userId, body, extractToken(httpHeaders)) }.toJakartaResponse()
     }
+
+    // ------------------------------------------------------------------ //
+    //  Participants
+    // ------------------------------------------------------------------ //
 
     @Authenticated
     @NeedsPermission(Permission.PROJECT_READ)
@@ -119,10 +127,7 @@ class DelegateResource {
     fun participants(
         @QueryParam("projectId") projectId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        return Response.ok(runBlocking { apiService.getParticipants(projectId, authToken) }).build()
-    }
+    ): Response = Response.ok(runBlocking { apiService.getParticipants(projectId, extractToken(httpHeaders)) }).build()
 
     @Authenticated
     @NeedsPermission(Permission.PROJECT_READ)
@@ -137,8 +142,7 @@ class DelegateResource {
         if (projectId == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Project ID is required").build()
         }
-        val authToken = extractToken(httpHeaders)
-        return Response.ok(runBlocking { apiService.getParticipant(projectId, participantId, authToken) }).build()
+        return Response.ok(runBlocking { apiService.getParticipant(projectId, participantId, extractToken(httpHeaders)) }).build()
     }
 
     @Authenticated
@@ -155,9 +159,7 @@ class DelegateResource {
         if (projectId == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Project ID is required").build()
         }
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.createParticipant(projectId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
+        return runBlocking { apiService.createParticipant(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
     }
 
     @Authenticated
@@ -175,20 +177,18 @@ class DelegateResource {
         if (projectId == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Project ID is required").build()
         }
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.updateParticipant(projectId, participantId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
+        return runBlocking { apiService.updateParticipant(projectId, participantId, body, extractToken(httpHeaders)) }.toJakartaResponse()
     }
+
+    // ------------------------------------------------------------------ //
+    //  Projects
+    // ------------------------------------------------------------------ //
 
     @GET
     @Path("/projects")
     @Produces(MediaType.APPLICATION_JSON)
-    fun projects(
-        @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        return Response.ok(runBlocking { apiService.getProjects(authToken) }).build()
-    }
+    fun projects(@Context httpHeaders: HttpHeaders): Response =
+        runBlocking { apiService.getProjects(extractToken(httpHeaders)) }.toJakartaResponse()
 
     @Authenticated
     @NeedsPermission(Permission.PROJECT_READ)
@@ -198,10 +198,7 @@ class DelegateResource {
     fun project(
         @PathParam("projectId") projectId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        return Response.ok(runBlocking { apiService.getProject(projectId, authToken) }).build()
-    }
+    ): Response = runBlocking { apiService.getProject(projectId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @Authenticated
     @NeedsPermission(Permission.PROJECT_READ)
@@ -211,10 +208,7 @@ class DelegateResource {
     fun projectParticipants(
         @PathParam("projectId") projectId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        return Response.ok(runBlocking { apiService.getProjectParticipants(projectId, authToken) }).build()
-    }
+    ): Response = runBlocking { apiService.getProjectParticipants(projectId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @Authenticated
     @NeedsPermission(Permission.PROJECT_READ)
@@ -225,12 +219,7 @@ class DelegateResource {
         @PathParam("projectId") projectId: String,
         @PathParam("participantId") participantId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        return Response.ok(
-            runBlocking { apiService.getProjectParticipant(projectId, participantId, authToken) },
-        ).build()
-    }
+    ): Response = runBlocking { apiService.getProjectParticipant(projectId, participantId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @Authenticated
     @NeedsPermission(Permission.PROJECT_READ)
@@ -240,10 +229,7 @@ class DelegateResource {
     fun listGroups(
         @PathParam("projectName") projectName: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        return Response.ok(runBlocking { apiService.listGroups(projectName, authToken) }).build()
-    }
+    ): Response = runBlocking { apiService.listGroups(projectName, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @POST
     @Path("/projects/{projectName}/groups")
@@ -253,11 +239,7 @@ class DelegateResource {
         @PathParam("projectName") projectName: String,
         body: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.createGroup(projectName, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.createGroup(projectName, body, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @DELETE
     @Path("/projects/{projectName}/groups/{groupName}")
@@ -267,21 +249,19 @@ class DelegateResource {
         @PathParam("groupName") groupName: String,
         @QueryParam("unlinkSubjects") unlinkSubjects: Boolean?,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking {
-            apiService.deleteGroup(projectName, groupName, unlinkSubjects ?: false, authToken)
-        }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking {
+        apiService.deleteGroup(projectName, groupName, unlinkSubjects ?: false, extractToken(httpHeaders))
+    }.toJakartaResponse()
+
+    // ------------------------------------------------------------------ //
+    //  Data sources
+    // ------------------------------------------------------------------ //
 
     @GET
     @Path("/sources")
     @Produces(MediaType.APPLICATION_JSON)
-    fun sourceCatalog(): Response {
-        val body = runBlocking { apiService.getSourceCatalog() }
-        return Response.ok(body, MediaType.APPLICATION_JSON).build()
-    }
+    fun sourceCatalog(): Response =
+        runBlocking { apiService.getSourceCatalog() }.toJakartaResponse()
 
     @GET
     @Path("/sources/projects/{projectId}/participants/{participantId}")
@@ -289,12 +269,11 @@ class DelegateResource {
     fun participantSources(
         @PathParam("projectId") projectId: String,
         @PathParam("participantId") participantId: String,
-    ): Response {
-        val body = runBlocking {
-            apiService.getParticipantSources(projectId, participantId)
-        }
-        return Response.ok(body, MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.getParticipantSources(projectId, participantId) }.toJakartaResponse()
+
+    // ------------------------------------------------------------------ //
+    //  Config
+    // ------------------------------------------------------------------ //
 
     @GET
     @Path("/config/projects/{projectId}")
@@ -302,11 +281,7 @@ class DelegateResource {
     fun studyConfig(
         @PathParam("projectId") projectId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val body = runBlocking { apiService.getStudyConfig(projectId, authToken) }
-        return Response.ok(body, MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.getStudyConfig(projectId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @GET
     @Path("/config/projects/{projectId}/protocol")
@@ -314,11 +289,7 @@ class DelegateResource {
     fun studyProtocol(
         @PathParam("projectId") projectId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val body = runBlocking { apiService.getProtocol(projectId, authToken) }
-        return Response.ok(body, MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.getProtocol(projectId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @GET
     @Path("/config/projects/{projectId}/sources/enrolment")
@@ -326,11 +297,7 @@ class DelegateResource {
     fun studyEnrolmentSource(
         @PathParam("projectId") projectId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val body = runBlocking { apiService.getEnrolmentSource(projectId, authToken) }
-        return Response.ok(body, MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.getEnrolmentSource(projectId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @GET
     @Path("/config/projects/{projectId}/enrolment/landing")
@@ -338,11 +305,7 @@ class DelegateResource {
     fun studyEnrolmentLanding(
         @PathParam("projectId") projectId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val body = runBlocking { apiService.getEnrolmentLanding(projectId, authToken) }
-        return Response.ok(body, MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.getEnrolmentLanding(projectId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @GET
     @Path("/config/projects/{projectId}/enrolment/protocol")
@@ -350,11 +313,7 @@ class DelegateResource {
     fun studyEnrolmentProtocol(
         @PathParam("projectId") projectId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val body = runBlocking { apiService.getEnrolmentProtocol(projectId, authToken) }
-        return Response.ok(body, MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.getEnrolmentProtocol(projectId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @GET
     @Path("/config/projects/{projectId}/questionnaires")
@@ -362,11 +321,7 @@ class DelegateResource {
     fun studyQuestionnaires(
         @PathParam("projectId") projectId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val body = runBlocking { apiService.getQuestionnaires(projectId, authToken) }
-        return Response.ok(body, MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.getQuestionnaires(projectId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @GET
     @Path("/config/projects/{projectId}/questionnaires/{questionnaireId}")
@@ -375,11 +330,7 @@ class DelegateResource {
         @PathParam("projectId") projectId: String,
         @PathParam("questionnaireId") questionnaireId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val body = runBlocking { apiService.getQuestionnaire(projectId, questionnaireId, authToken) }
-        return Response.ok(body, MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.getQuestionnaire(projectId, questionnaireId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @PUT
     @Path("/config/projects/{projectId}")
@@ -391,11 +342,11 @@ class DelegateResource {
         @Context httpHeaders: HttpHeaders,
     ): Response {
         if (body.isNullOrBlank()) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Request body is required (StudyDefinition JSON)").type(MediaType.APPLICATION_JSON).build()
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity("Request body is required (StudyDefinition JSON)")
+                .type(MediaType.APPLICATION_JSON).build()
         }
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.updateStudyConfig(projectId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
+        return runBlocking { apiService.updateStudyConfig(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
     }
 
     @PUT
@@ -406,11 +357,7 @@ class DelegateResource {
         @PathParam("projectId") projectId: String,
         body: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.updateQuestionnaires(projectId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.updateQuestionnaires(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @POST
     @Path("/config/projects/{projectId}/questionnaires")
@@ -420,11 +367,7 @@ class DelegateResource {
         @PathParam("projectId") projectId: String,
         body: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.createQuestionnaire(projectId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.createQuestionnaire(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @PUT
     @Path("/config/projects/{projectId}/questionnaires/{questionnaireId}")
@@ -435,11 +378,7 @@ class DelegateResource {
         @PathParam("questionnaireId") questionnaireId: String,
         body: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.updateQuestionnaire(projectId, questionnaireId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.updateQuestionnaire(projectId, questionnaireId, body, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @DELETE
     @Path("/config/projects/{projectId}/questionnaires/{questionnaireId}")
@@ -448,11 +387,7 @@ class DelegateResource {
         @PathParam("projectId") projectId: String,
         @PathParam("questionnaireId") questionnaireId: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.deleteQuestionnaire(projectId, questionnaireId, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.deleteQuestionnaire(projectId, questionnaireId, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @PUT
     @Path("/config/projects/{projectId}/sources/protocol")
@@ -462,11 +397,7 @@ class DelegateResource {
         @PathParam("projectId") projectId: String,
         body: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.updateProtocolSource(projectId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.updateProtocolSource(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @PUT
     @Path("/config/projects/{projectId}/protocol")
@@ -476,11 +407,7 @@ class DelegateResource {
         @PathParam("projectId") projectId: String,
         body: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.updateProtocolBody(projectId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.updateProtocolBody(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @PUT
     @Path("/config/projects/{projectId}/sources/enrolment")
@@ -490,11 +417,7 @@ class DelegateResource {
         @PathParam("projectId") projectId: String,
         body: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.updateEnrolmentSource(projectId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.updateEnrolmentSource(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @PUT
     @Path("/config/projects/{projectId}/enrolment/landing")
@@ -504,11 +427,7 @@ class DelegateResource {
         @PathParam("projectId") projectId: String,
         body: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.updateEnrolmentLandingBody(projectId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.updateEnrolmentLandingBody(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
 
     @PUT
     @Path("/config/projects/{projectId}/enrolment/protocol")
@@ -518,18 +437,14 @@ class DelegateResource {
         @PathParam("projectId") projectId: String,
         body: String,
         @Context httpHeaders: HttpHeaders,
-    ): Response {
-        val authToken = extractToken(httpHeaders)
-        val (status, responseBody) = runBlocking { apiService.updateEnrolmentProtocolBody(projectId, body, authToken) }
-        return Response.status(status).entity(responseBody).type(MediaType.APPLICATION_JSON).build()
-    }
+    ): Response = runBlocking { apiService.updateEnrolmentProtocolBody(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
 
-    private fun extractToken(httpHeaders: HttpHeaders): String? {
-        val authHeader = httpHeaders.getRequestHeader(HttpHeaders.AUTHORIZATION)?.firstOrNull()
-        return if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            authHeader.substring(7)
-        } else {
-            null
-        }
-    }
+
+    private fun extractToken(httpHeaders: HttpHeaders): String? =
+        httpHeaders.getRequestHeader(HttpHeaders.AUTHORIZATION)
+            ?.firstOrNull()
+            ?.takeIf { it.startsWith("Bearer ", ignoreCase = true) }
+            ?.substring(7)
+            ?.takeIf { it.isNotBlank() }
+
 }
