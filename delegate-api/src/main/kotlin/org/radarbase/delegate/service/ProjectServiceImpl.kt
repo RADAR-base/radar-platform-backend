@@ -2,9 +2,9 @@ package org.radarbase.delegate.service
 
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import org.radarbase.core.model.project.Group
+import org.radarbase.core.model.project.Project
 import org.radarbase.delegate.config.DelegateConfig
-import org.radarbase.delegate.model.Group
-import org.radarbase.delegate.model.Project
 import org.radarbase.delegate.model.ProjectParticipant
 import org.slf4j.LoggerFactory
 
@@ -13,7 +13,7 @@ class ProjectServiceImpl
     @Inject
     constructor(
         private val httpClient: HttpClientService,
-        private val config: DelegateConfig,
+        config: DelegateConfig,
     ) : ProjectService {
         private val logger = LoggerFactory.getLogger(ProjectServiceImpl::class.java)
         private val baseUrl = config.projectService.baseUrl

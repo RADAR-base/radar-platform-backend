@@ -1,8 +1,8 @@
-package org.radarbase.delegate.model
+package org.radarbase.project.model
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Group(
+data class CreateGroupRequest(
     val name: String,
 )

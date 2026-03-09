@@ -11,6 +11,8 @@ application {
 }
 
 dependencies {
+    implementation(project(":core"))
+
     // Jersey dependencies
     implementation("org.glassfish.jersey.containers:jersey-container-grizzly2-http:3.1.2")
     implementation("org.glassfish.jersey.inject:jersey-hk2:3.1.2")

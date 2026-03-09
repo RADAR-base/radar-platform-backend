@@ -1,4 +1,4 @@
-package org.radarbase.user.filter
+package org.radarbase.core.filter
 
 import jakarta.ws.rs.container.ContainerRequestContext
 import jakarta.ws.rs.container.ContainerRequestFilter
@@ -29,3 +29,4 @@ class AuthorizationFilter : ContainerRequestFilter {
         }
     }
 }
+

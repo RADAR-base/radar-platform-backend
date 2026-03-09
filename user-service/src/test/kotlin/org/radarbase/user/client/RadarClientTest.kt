@@ -18,8 +18,9 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.radarbase.core.util.KtorClientFactory
+import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.user.config.UserServiceConfig
-import org.radarbase.user.service.ServiceTokenProvider
 
 class RadarClientTest {
     private lateinit var config: UserServiceConfig
@@ -95,8 +96,7 @@ class RadarClientTest {
             }
 
         mockClient = HttpClient(mockEngine)
-        ktorClientFactory =
-            mockk<KtorClientFactory>().apply {
+        ktorClientFactory = mockk<KtorClientFactory>().apply {
                 every { createClient(any(), any(), any()) } returns mockClient
             }
 
@@ -105,7 +105,7 @@ class RadarClientTest {
                 coEvery { getToken() } returns "test-token"
             }
 
-        client = RadarClient(config, ktorClientFactory, tokenProvider)
+        client = RadarClient(config, tokenProvider, ktorClientFactory)
     }
 
     @Test
@@ -215,7 +215,7 @@ class RadarClientTest {
                     coEvery { getToken() } returns "test-token"
                 }
 
-            val client = RadarClient(config, ktorClientFactory, testTokenProvider)
+            val client = RadarClient(config, testTokenProvider, ktorClientFactory)
             val user = client.getUser("project-1", "non-existent")
 
             assertNull(user)
@@ -240,7 +240,7 @@ class RadarClientTest {
                     coEvery { getToken() } returns "test-token"
                 }
 
-            val client = RadarClient(config, ktorClientFactory, testTokenProvider)
+            val client = RadarClient(config, testTokenProvider, ktorClientFactory)
             val users = client.getUsers("project-1")
 
             assertNotNull(users)

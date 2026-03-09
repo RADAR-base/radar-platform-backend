@@ -1,8 +1,8 @@
 package org.radarbase.project
 
+import org.radarbase.core.logging.LoggingConfigurator
 import org.radarbase.jersey.GrizzlyServer
 import org.radarbase.jersey.config.ConfigLoader
-import org.radarbase.project.config.ProjectLoggingConfiguration
 import org.radarbase.project.config.ProjectServiceConfiguration
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,10 +15,9 @@ class ProjectServiceApplication {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val config =
-                try {
+            val config = try {
                     ConfigLoader.loadConfig<ProjectServiceConfiguration>("config.yaml", args)
-                } catch (ex: IllegalArgumentException) {
+                } catch (_: IllegalArgumentException) {
                     logger.error("No configuration file was found.")
                     logger.error("Usage: project-service <config-file>")
                     exitProcess(1)
@@ -31,9 +30,7 @@ class ProjectServiceApplication {
                 exitProcess(1)
             }
 
-            // Configure logging
-            val loggingConfig = ProjectLoggingConfiguration(config)
-            loggingConfig.configure()
+            LoggingConfigurator(config.logging).apply(LoggingConfigurator::configure)
 
             val resources = ConfigLoader.loadResources(config.resourceConfig, config)
 

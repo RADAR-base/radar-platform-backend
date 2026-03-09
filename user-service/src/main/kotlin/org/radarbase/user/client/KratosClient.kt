@@ -16,21 +16,20 @@ import jakarta.inject.Singleton
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.radarbase.core.util.KtorClientFactory
+import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.user.config.UserServiceConfig
 import org.radarbase.user.model.KratosCreateIdentityRequest
 import org.radarbase.user.model.KratosRecoveryFlow
 import org.radarbase.user.model.KratosRecoverySubmitRequest
 import org.radarbase.user.model.KratosUser
-import org.radarbase.user.service.ServiceTokenProvider
 import org.slf4j.LoggerFactory
 
 @Singleton
-class KratosClient
-    @Inject
-    constructor(
-        private val config: UserServiceConfig,
-        ktorClientFactory: KtorClientFactory,
-        private val tokenProvider: ServiceTokenProvider,
+class KratosClient @Inject constructor(
+    private val config: UserServiceConfig,
+    private val tokenProvider: ServiceTokenProvider,
+    ktorClientFactory: KtorClientFactory,
     ) {
         private val logger = LoggerFactory.getLogger(KratosClient::class.java)
         private val kratosConfig = config.kratos

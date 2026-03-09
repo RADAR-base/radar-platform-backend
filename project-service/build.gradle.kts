@@ -17,6 +17,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 dependencies {
+    implementation(project(":core"))
+
     // Add any project-service specific dependencies here
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 

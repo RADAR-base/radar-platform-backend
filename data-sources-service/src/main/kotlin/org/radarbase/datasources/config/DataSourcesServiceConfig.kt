@@ -2,6 +2,8 @@ package org.radarbase.datasources.config
 
 import jakarta.inject.Singleton
 import kotlinx.serialization.Serializable
+import org.radarbase.core.config.LoggingConfig
+import org.radarbase.core.config.ServiceAuthConfig
 import java.net.URI
 
 @Singleton
@@ -31,19 +33,6 @@ data class DataSourcesServiceConfig(
     data class ServerConfig(
         val baseUri: String = "http://0.0.0.0:8084",
         val isJmxEnabled: Boolean = true,
-    )
-
-    data class LoggingConfig(
-        val level: String = "INFO",
-        val file: String = "logs/data-sources-service.log",
-        val pattern: String = "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n",
-    )
-
-    data class ServiceAuthConfig(
-        val clientId: String = "",
-        val clientSecret: String = "",
-        val tokenEndpoint: String = "",
-        val scope: String? = null,
     )
 
     data class ManagementPortalConfig(

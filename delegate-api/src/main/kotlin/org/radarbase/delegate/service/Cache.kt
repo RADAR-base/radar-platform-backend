@@ -30,7 +30,7 @@ class Cache<T>
         ): T {
             return mutex.withLock {
                 @Suppress("UNCHECKED_CAST")
-                val cached = cache[cacheKey] as? CacheEntry<T>
+                val cached = cache[cacheKey]
 
                 if (cached != null && !cached.isExpired(CACHE_EXPIRY_SECONDS)) {
                     logMessage?.let { logger.debug(it) }

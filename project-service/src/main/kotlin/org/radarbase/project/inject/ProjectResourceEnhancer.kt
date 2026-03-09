@@ -3,23 +3,25 @@ package org.radarbase.project.inject
 import jakarta.inject.Singleton
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.glassfish.jersey.process.internal.RequestScoped
+import org.radarbase.core.filter.AuthorizationFilter
+import org.radarbase.core.util.KtorClientFactory
+import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.jersey.filter.Filters
 import org.radarbase.jersey.service.AsyncCoroutineService
 import org.radarbase.jersey.service.HealthService.Metric
 import org.radarbase.jersey.service.ScopedAsyncCoroutineService
-import org.radarbase.project.client.KtorClientFactory
 import org.radarbase.project.client.RadarProjectClient
 import org.radarbase.project.config.ProjectServiceConfiguration
-import org.radarbase.project.filter.AuthorizationFilter
 import org.radarbase.project.service.ProjectHealthMetric
 import org.radarbase.project.service.ProjectService
 import org.radarbase.project.service.ProjectServiceImpl
-import org.radarbase.project.service.ServiceTokenProvider
 
 class ProjectResourceEnhancer(
     private val config: ProjectServiceConfiguration,
 ) : JerseyResourceEnhancer {
+    private val serviceTokenProvider: ServiceTokenProvider = ServiceTokenProvider(config.serviceAuth)
+
     override val packages: Array<String> =
         arrayOf(
             "org.radarbase.project.resource",
@@ -61,7 +63,7 @@ class ProjectResourceEnhancer(
             .to(AsyncCoroutineService::class.java)
             .`in`(RequestScoped::class.java)
 
-        bind(ServiceTokenProvider::class.java)
+        bind(serviceTokenProvider::class.java)
             .to(ServiceTokenProvider::class.java)
             .`in`(Singleton::class.java)
     }

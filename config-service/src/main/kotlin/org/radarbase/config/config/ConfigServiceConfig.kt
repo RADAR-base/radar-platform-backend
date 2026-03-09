@@ -2,6 +2,7 @@ package org.radarbase.config.config
 
 import jakarta.inject.Singleton
 import org.radarbase.config.inject.ConfigJwtEnhancerFactory
+import org.radarbase.core.config.LoggingConfig
 import org.radarbase.jersey.enhancer.EnhancerFactory
 import java.net.URI
 
@@ -22,11 +23,6 @@ data class ConfigServiceConfig(
         val isJmxEnabled: Boolean = true,
     )
 
-    data class LoggingConfig(
-        val level: String = "INFO",
-        val file: String = "logs/config-service.log",
-        val pattern: String = "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n",
-    )
 
     data class ProviderConfig(
         val github: GithubProviderConfig = GithubProviderConfig(),

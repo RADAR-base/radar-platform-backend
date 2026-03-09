@@ -16,30 +16,30 @@ import jakarta.inject.Singleton
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.radarbase.core.model.project.Group
+import org.radarbase.core.util.KtorClientFactory
+import org.radarbase.core.util.ServiceTokenProvider
 import org.radarbase.project.config.ProjectServiceConfiguration
 import org.radarbase.project.model.CreateGroupRequest
-import org.radarbase.project.model.Group
 import org.radarbase.project.model.ProjectParticipant
 import org.radarbase.project.model.RadarProject
-import org.radarbase.project.service.ServiceTokenProvider
 import org.slf4j.LoggerFactory
 
 @Singleton
 class RadarProjectClient
     @Inject
     constructor(
-        private val config: ProjectServiceConfiguration,
-        ktorClientFactory: KtorClientFactory,
         private val serviceTokenProvider: ServiceTokenProvider,
+        config: ProjectServiceConfiguration,
+        ktorClientFactory: KtorClientFactory,
     ) {
         private val logger = LoggerFactory.getLogger(RadarProjectClient::class.java)
         private val radarConfig = config.radar
 
-        private val client =
-            ktorClientFactory.createClient(
+        private val client = ktorClientFactory.createClient(
                 baseUrl = radarConfig.baseUrl,
                 timeoutSeconds = radarConfig.timeout,
-                maxRetriesCount = radarConfig.maxRetries.toInt(),
+                maxRetriesCount = radarConfig.maxRetries,
             )
 
         suspend fun checkHealth(): Boolean {
