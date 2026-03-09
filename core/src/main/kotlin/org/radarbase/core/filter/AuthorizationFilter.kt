@@ -29,4 +29,3 @@ class AuthorizationFilter : ContainerRequestFilter {
         }
     }
 }
-

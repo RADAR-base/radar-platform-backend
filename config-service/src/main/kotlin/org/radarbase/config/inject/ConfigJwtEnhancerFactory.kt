@@ -8,10 +8,9 @@ import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 class ConfigJwtEnhancerFactory(
     private val config: ConfigServiceConfig,
 ) : EnhancerFactory {
-    override fun createEnhancers(): List<JerseyResourceEnhancer> =
-        listOf(
-            ConfigResourceEnhancer(config),
-            Enhancers.exception,
-            Enhancers.health,
-        )
+    override fun createEnhancers(): List<JerseyResourceEnhancer> = listOf(
+        ConfigResourceEnhancer(config),
+        Enhancers.exception,
+        Enhancers.health,
+    )
 }

@@ -15,7 +15,8 @@ class UserApplication {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val config = try {
+            val config =
+                try {
                     ConfigLoader.loadConfig<UserServiceConfig>("config.yaml", args)
                 } catch (_: IllegalArgumentException) {
                     logger.error("No configuration file was found.")

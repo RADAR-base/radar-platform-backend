@@ -8,5 +8,3 @@ data class AuthConfig(
     val keyStore: KeyStoreConfig?,
     val publicKeyUrls: List<String>? = emptyList(),
 )
-
-

@@ -5,4 +5,3 @@ data class KeyStoreConfig(
     val password: String,
     val path: String,
 )
-

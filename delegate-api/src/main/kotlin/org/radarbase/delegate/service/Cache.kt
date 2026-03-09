@@ -8,45 +8,45 @@ import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
 class Cache<T>
-    @Inject
-    constructor(
-        private val CACHE_EXPIRY_SECONDS: Long = 10L,
+@Inject
+constructor(
+    private val CACHE_EXPIRY_SECONDS: Long = 10L,
+) {
+    private val logger = LoggerFactory.getLogger(Cache::class.java)
+    private val mutex = Mutex()
+    private val cache = ConcurrentHashMap<String, CacheEntry<T>>()
+
+    private data class CacheEntry<T>(
+        val data: T,
+        val timestamp: Instant = Instant.now(),
     ) {
-        private val logger = LoggerFactory.getLogger(Cache::class.java)
-        private val mutex = Mutex()
-        private val cache = ConcurrentHashMap<String, CacheEntry<T>>()
+        fun isExpired(expirySeconds: Long): Boolean = Instant.now().isAfter(timestamp.plusSeconds(expirySeconds))
+    }
 
-        private data class CacheEntry<T>(
-            val data: T,
-            val timestamp: Instant = Instant.now(),
-        ) {
-            fun isExpired(expirySeconds: Long): Boolean = Instant.now().isAfter(timestamp.plusSeconds(expirySeconds))
-        }
+    suspend fun withCache(
+        cacheKey: String,
+        fetchData: suspend () -> T,
+        logMessage: String? = null,
+    ): T {
+        return mutex.withLock {
+            @Suppress("UNCHECKED_CAST")
+            val cached = cache[cacheKey]
 
-        suspend fun withCache(
-            cacheKey: String,
-            fetchData: suspend () -> T,
-            logMessage: String? = null,
-        ): T {
-            return mutex.withLock {
-                @Suppress("UNCHECKED_CAST")
-                val cached = cache[cacheKey]
-
-                if (cached != null && !cached.isExpired(CACHE_EXPIRY_SECONDS)) {
-                    logMessage?.let { logger.debug(it) }
-                    return@withLock cached.data
-                }
-                val data = fetchData()
-                cache[cacheKey] = CacheEntry(data)
-                data
+            if (cached != null && !cached.isExpired(CACHE_EXPIRY_SECONDS)) {
+                logMessage?.let { logger.debug(it) }
+                return@withLock cached.data
             }
-        }
-
-        fun clearCache(cacheKey: String) {
-            cache.remove(cacheKey)
-        }
-
-        fun clearAllCache() {
-            cache.clear()
+            val data = fetchData()
+            cache[cacheKey] = CacheEntry(data)
+            data
         }
     }
+
+    fun clearCache(cacheKey: String) {
+        cache.remove(cacheKey)
+    }
+
+    fun clearAllCache() {
+        cache.clear()
+    }
+}

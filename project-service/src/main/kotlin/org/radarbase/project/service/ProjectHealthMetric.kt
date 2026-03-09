@@ -12,17 +12,16 @@ class ProjectHealthMetric(
     private val logger = LoggerFactory.getLogger(ProjectHealthMetric::class.java)
 
     override suspend fun computeMetrics(): Map<String, Any> {
-        val radarStatus =
-            try {
-                if (radarProjectClient.checkHealth()) {
-                    "connected"
-                } else {
-                    "disconnected"
-                }
-            } catch (e: Exception) {
-                logger.error("Radar health check failed", e)
+        val radarStatus = try {
+            if (radarProjectClient.checkHealth()) {
+                "connected"
+            } else {
                 "disconnected"
             }
+        } catch (e: Exception) {
+            logger.error("Radar health check failed", e)
+            "disconnected"
+        }
 
         return mapOf(
             "status" to "ok",
@@ -42,7 +41,9 @@ class ProjectHealthMetric(
                 HealthService.Status.DOWN
             }
 
-            else -> HealthService.Status.UP
+            else -> {
+                HealthService.Status.UP
+            }
         }
     }
 }

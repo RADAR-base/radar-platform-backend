@@ -15,12 +15,9 @@ class DelegateApplication {
         fun main(args: Array<String>) {
             val config = ConfigLoader.loadConfig<DelegateConfig>("config.yaml", args)
 
-            val resourceConfig: ResourceConfig =
-                ConfigLoader.loadResources(config.resourceConfig, config)
+            val resourceConfig: ResourceConfig = ConfigLoader.loadResources(config.resourceConfig, config)
 
-            val server: HttpServer =
-                GrizzlyHttpServerFactory
-                    .createHttpServer(URI.create(BASE_URI), resourceConfig)
+            val server: HttpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), resourceConfig)
 
             Runtime.getRuntime().addShutdownHook(
                 Thread {

@@ -36,6 +36,6 @@ providers:
     username: ""
     password: ""
   # Order of providers for read and write (first enabled writable provider is used for writes)
-  order: ["github", "appConfig", "db"]
+  order: [ "github", "appConfig", "db" ]
 
 

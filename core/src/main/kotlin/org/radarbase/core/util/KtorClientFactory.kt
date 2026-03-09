@@ -18,37 +18,33 @@ import java.time.Duration
 
 @Singleton
 class KtorClientFactory {
-    private val json =
-        Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-            encodeDefaults = true
-        }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        encodeDefaults = true
+    }
 
     fun createClient(
         baseUrl: String,
         timeoutSeconds: Long,
         maxRetriesCount: Int,
-    ): HttpClient =
-        HttpClient(CIO) {
-            install(ContentNegotiation) {
-                json(json)
-            }
-            install(HttpTimeout) {
-                requestTimeoutMillis = Duration.ofSeconds(timeoutSeconds).toMillis()
-                connectTimeoutMillis = Duration.ofSeconds(timeoutSeconds).toMillis()
-            }
-            install(HttpRequestRetry) {
-                maxRetries = maxRetriesCount
-                retryOnExceptionIf { _, cause ->
-                    cause is HttpRequestTimeoutException ||
-                        cause is ConnectTimeoutException
-                }
-            }
-            defaultRequest {
-                url(baseUrl)
-                header(HttpHeaders.Accept, ContentType.Application.Json)
+    ): HttpClient = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json(json)
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = Duration.ofSeconds(timeoutSeconds).toMillis()
+            connectTimeoutMillis = Duration.ofSeconds(timeoutSeconds).toMillis()
+        }
+        install(HttpRequestRetry) {
+            maxRetries = maxRetriesCount
+            retryOnExceptionIf { _, cause ->
+                cause is HttpRequestTimeoutException || cause is ConnectTimeoutException
             }
         }
+        defaultRequest {
+            url(baseUrl)
+            header(HttpHeaders.Accept, ContentType.Application.Json)
+        }
+    }
 }
-

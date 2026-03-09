@@ -13,4 +13,3 @@ data class DelegateConfig(
 ) {
     val resourceConfig: Class<out EnhancerFactory> = DelegateJwtEnhancerFactory::class.java
 }
-

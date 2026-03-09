@@ -45,8 +45,8 @@ class KratosClientTest {
             MockEngine { _: HttpRequestData ->
                 respond(
                     content =
-                        ByteReadChannel(
-                            """[
+                    ByteReadChannel(
+                        """[
                     {
                         "id": "test-id",
                         "schemaId": "default",
@@ -90,14 +90,15 @@ class KratosClientTest {
                         "organizationId": null
                     }
                 ]""",
-                        ),
+                    ),
                     status = HttpStatusCode.OK,
                     headers = headersOf(HttpHeaders.ContentType, "application/json"),
                 )
             }
 
         mockClient = HttpClient(mockEngine)
-        ktorClientFactory = mockk<KtorClientFactory>().apply {
+        ktorClientFactory =
+            mockk<KtorClientFactory>().apply {
                 every { createClient(any(), any(), any()) } returns mockClient
             }
 

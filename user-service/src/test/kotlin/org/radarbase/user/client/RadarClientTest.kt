@@ -46,8 +46,8 @@ class RadarClientTest {
             MockEngine { _: HttpRequestData ->
                 respond(
                     content =
-                        ByteReadChannel(
-                            """[
+                    ByteReadChannel(
+                        """[
                     {
                         "id": 1,
                         "externalLink": "https://example.com/user/1",
@@ -89,14 +89,15 @@ class RadarClientTest {
                         "identity": "test-identity"
                     }
                 ]""",
-                        ),
+                    ),
                     status = HttpStatusCode.OK,
                     headers = headersOf(HttpHeaders.ContentType, "application/json"),
                 )
             }
 
         mockClient = HttpClient(mockEngine)
-        ktorClientFactory = mockk<KtorClientFactory>().apply {
+        ktorClientFactory =
+            mockk<KtorClientFactory>().apply {
                 every { createClient(any(), any(), any()) } returns mockClient
             }
 
