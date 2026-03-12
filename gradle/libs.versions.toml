@@ -1,0 +1,75 @@
+[versions]
+java = "17"
+project = "1.0.0"
+
+# Radar
+radar-commons-gradle = "1.2.4"
+radar-jersey = "0.12.1"
+
+# Kotlin
+kotlin = "1.9.24"
+kotlinx-serialization = "1.6.2"
+coroutines = "1.7.3"
+
+# Server
+jersey = "3.1.5"
+ktor = "2.3.5"
+jakarta-inject = "2.0.1"
+jakarta-ws-rs = "3.1.0"
+
+# Logging
+logback = "1.4.14"
+
+# Build
+shadow = "8.1.1"
+
+# Test
+mockk = "1.14.2"
+mockito = "5.3.1"
+mockito-kotlin = "5.1.0"
+
+[libraries]
+# Jersey
+jersey-grizzly = { module = "org.glassfish.jersey.containers:jersey-container-grizzly2-http", version.ref = "jersey" }
+jersey-hk2 = { module = "org.glassfish.jersey.inject:jersey-hk2", version.ref = "jersey" }
+jersey-jackson = { module = "org.glassfish.jersey.media:jersey-media-json-jackson", version.ref = "jersey" }
+jersey-server = { module = "org.glassfish.jersey.core:jersey-server", version.ref = "jersey" }
+radar-jersey = { module = "org.radarbase:radar-jersey", version.ref = "radar-jersey" }
+
+# Ktor Client
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+# Ktor Server
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-contentNegotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+
+# Kotlin
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-slf4j = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j", version.ref = "coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+
+# Jakarta
+jakarta-inject = { module = "jakarta.inject:jakarta.inject-api", version.ref = "jakarta-inject" }
+jakarta-ws-rs = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version.ref = "jakarta-ws-rs" }
+
+# Logging
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+# Test
+jersey-test-core = { module = "org.glassfish.jersey.test-framework:jersey-test-framework-core", version.ref = "jersey" }
+jersey-test-grizzly = { module = "org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2", version.ref = "jersey" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+
+[plugins]
+radar-kotlin = { id = "org.radarbase.radar-kotlin", version.ref = "radar-commons-gradle" }
+radar-dependency-management = { id = "org.radarbase.radar-dependency-management", version.ref = "radar-commons-gradle" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
