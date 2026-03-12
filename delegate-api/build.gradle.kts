@@ -1,10 +1,3 @@
-dependencies {
-    implementation(project(":contract"))
-    implementation("org.radarbase:radar-jersey:0.12.0")
-
-    testImplementation("io.mockk:mockk:1.14.2")
-}
-
 plugins {
     application
 }
@@ -13,8 +6,10 @@ application {
     mainClass.set("org.radarbase.delegate.DelegateApplication")
 }
 
-tasks.test {
-    useJUnitPlatform()
+dependencies {
+    implementation(project(":contract"))
+    implementation(project(":core"))
+    testImplementation(libs.mockk)
 }
 
 tasks.jar {
