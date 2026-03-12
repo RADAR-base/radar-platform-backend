@@ -1,5 +1,4 @@
 [versions]
-java = "17"
 project = "1.0.0"
 
 # Radar
@@ -25,8 +24,6 @@ shadow = "8.1.1"
 
 # Test
 mockk = "1.14.2"
-mockito = "5.3.1"
-mockito-kotlin = "5.1.0"
 
 [libraries]
 # Jersey
@@ -43,16 +40,9 @@ ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotia
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
-# Ktor Server
-ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
-ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
-ktor-server-contentNegotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
-
 # Kotlin
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinx-coroutines-slf4j = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j", version.ref = "coroutines" }
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 # Jakarta
 jakarta-inject = { module = "jakarta.inject:jakarta.inject-api", version.ref = "jakarta-inject" }
@@ -65,8 +55,6 @@ logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "lo
 jersey-test-core = { module = "org.glassfish.jersey.test-framework:jersey-test-framework-core", version.ref = "jersey" }
 jersey-test-grizzly = { module = "org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2", version.ref = "jersey" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
 
 [plugins]
 radar-kotlin = { id = "org.radarbase.radar-kotlin", version.ref = "radar-commons-gradle" }
