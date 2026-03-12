@@ -5,4 +5,3 @@ data class ServerConfig(
     val isJmxEnabled: Boolean = true,
     val requestTimeout: Long = 30,
 )
-

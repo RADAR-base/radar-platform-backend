@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.radarbase.core.util.KtorClientFactory
 import org.radarbase.core.util.ServiceTokenProvider
+import org.radarbase.user.config.MPConfig
 import org.radarbase.user.config.UserServiceConfig
 
 class RadarClientTest {
@@ -35,7 +36,7 @@ class RadarClientTest {
         config =
             mockk<UserServiceConfig>().apply {
                 every { managementPortal } returns
-                    UserServiceConfig.ManagementPortalConfig(
+                    MPConfig(
                         baseUrl = "http://management-portal:8080/api",
                         timeoutSeconds = 5,
                         maxRetries = 3,
