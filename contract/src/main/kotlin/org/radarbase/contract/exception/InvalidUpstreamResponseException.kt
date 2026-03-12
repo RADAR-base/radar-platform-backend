@@ -26,4 +26,3 @@ import org.radarbase.jersey.exception.HttpApplicationException
 class InvalidUpstreamResponseException(
     message: String = "Upstream service returned invalid response",
 ) : HttpApplicationException(Status.BAD_GATEWAY, "bad_gateway", message)
-

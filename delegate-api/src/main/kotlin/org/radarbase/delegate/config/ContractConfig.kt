@@ -10,4 +10,3 @@ data class ContractConfig(
     val config: String,
     val dataSources: String,
 )
-

@@ -80,4 +80,3 @@ object ParticipantServiceContract {
             }.let { createProxyFromResponse(it) }
         }
 }
-

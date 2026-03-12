@@ -16,7 +16,6 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import kotlinx.coroutines.runBlocking
 import org.radarbase.auth.authorization.Permission
-import org.radarbase.contract.response.ProxyResponse
 import org.radarbase.contract.utils.ContractUtils.toJakartaResponse
 import org.radarbase.delegate.service.DelegateApiService
 import org.radarbase.delegate.service.DelegateHealthMetric
@@ -439,12 +438,10 @@ class DelegateResource {
         @Context httpHeaders: HttpHeaders,
     ): Response = runBlocking { apiService.updateEnrolmentProtocolBody(projectId, body, extractToken(httpHeaders)) }.toJakartaResponse()
 
-
     private fun extractToken(httpHeaders: HttpHeaders): String? =
         httpHeaders.getRequestHeader(HttpHeaders.AUTHORIZATION)
             ?.firstOrNull()
             ?.takeIf { it.startsWith("Bearer ", ignoreCase = true) }
             ?.substring(7)
             ?.takeIf { it.isNotBlank() }
-
 }

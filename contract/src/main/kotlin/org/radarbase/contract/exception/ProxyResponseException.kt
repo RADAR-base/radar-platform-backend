@@ -29,4 +29,3 @@ class ProxyResponseException(
     message: String,
     code: String = "request_failed",
 ) : HttpApplicationException(status, code, message)
-

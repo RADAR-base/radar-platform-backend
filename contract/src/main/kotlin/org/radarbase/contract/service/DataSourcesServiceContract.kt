@@ -45,4 +45,3 @@ object DataSourcesServiceContract {
                 .let { createProxyFromResponse(it) }
         }
 }
-

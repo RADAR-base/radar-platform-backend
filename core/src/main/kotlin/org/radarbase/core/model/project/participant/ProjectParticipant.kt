@@ -34,4 +34,3 @@ data class ProjectParticipant(
     val attributes: Map<String, String> = emptyMap(),
     val metadata: Map<String, JsonElement> = emptyMap(),
 )
-
