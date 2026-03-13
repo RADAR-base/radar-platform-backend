@@ -1,10 +1,16 @@
-rootProject.name = "platform-backend"
+rootProject.name = "radar-platform-backend"
 
-include(":core")
-include(":contract")
-include(":delegate-api")
-include(":user-service")
-include(":data-sources-service")
-include(":data-service")
-include(":project-service")
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
 include(":config-service")
+include(":contract")
+include(":core")
+include(":data-sources-service")
+include(":delegate-api")
+include(":project-service")
+include(":user-service")

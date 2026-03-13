@@ -22,7 +22,6 @@ import org.radarbase.user.config.UserServiceConfig
 import org.radarbase.user.resource.UserResource
 import org.radarbase.user.service.CombinedUser
 import org.radarbase.user.service.UserService
-import kotlin.time.Duration
 
 class UserResourceTest : JerseyTest() {
     private lateinit var userService: UserService

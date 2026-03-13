@@ -206,5 +206,3 @@ object ContractUtils {
         return "/" + trimmed.trim('/')
     }
 }
-
-

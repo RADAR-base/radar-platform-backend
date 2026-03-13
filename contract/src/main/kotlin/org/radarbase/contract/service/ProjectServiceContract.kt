@@ -102,4 +102,3 @@ object ProjectServiceContract {
             }.let { createProxyFromResponse(it) }
         }
 }
-

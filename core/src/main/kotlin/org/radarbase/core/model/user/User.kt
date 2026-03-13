@@ -34,4 +34,3 @@ data class User(
     val status: String,
     val metadata: Map<String, JsonElement> = emptyMap(),
 )
-

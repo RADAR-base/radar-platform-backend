@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.radarbase.core.util.KtorClientFactory
 import org.radarbase.core.util.ServiceTokenProvider
+import org.radarbase.user.config.KratosConfig
 import org.radarbase.user.config.UserServiceConfig
 
 class KratosClientTest {
@@ -34,7 +35,7 @@ class KratosClientTest {
         config =
             mockk<UserServiceConfig>().apply {
                 every { kratos } returns
-                    UserServiceConfig.KratosConfig(
+                    KratosConfig(
                         baseUrl = "http://kratos:4434",
                         timeoutSeconds = 5,
                         maxRetries = 3,

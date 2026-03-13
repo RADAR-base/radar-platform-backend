@@ -2,8 +2,8 @@ package org.radarbase.project.service
 
 import org.radarbase.core.model.project.Group
 import org.radarbase.core.model.project.Project
-import org.radarbase.project.model.CreateGroupRequest
 import org.radarbase.core.model.project.participant.ProjectParticipant
+import org.radarbase.project.model.CreateGroupRequest
 import org.radarbase.project.model.RadarProject
 
 interface ProjectService {
