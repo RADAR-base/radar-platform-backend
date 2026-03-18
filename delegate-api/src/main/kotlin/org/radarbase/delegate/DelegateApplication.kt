@@ -13,7 +13,10 @@ class DelegateApplication {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val config = ConfigLoader.loadConfig<DelegateConfig>("config.yaml", args)
+            val config = ConfigLoader.loadConfig<DelegateConfig>(
+                listOf("delegate-api/src/main/resources/config.yaml", "/etc/delegate-api/config.yaml"),
+                args,
+            )
 
             val resourceConfig: ResourceConfig = ConfigLoader.loadResources(config.resourceConfig, config)
 

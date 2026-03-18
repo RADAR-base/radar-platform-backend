@@ -24,7 +24,10 @@ class DataSourcesApplication {
         @JvmStatic
         fun main(args: Array<String>) {
             val config = try {
-                ConfigLoader.loadConfig<DataSourcesServiceConfig>("config.yaml", args)
+                ConfigLoader.loadConfig<DataSourcesServiceConfig>(
+                    listOf("data-sources-service/src/main/resources/config.yaml", "/etc/data-sources-service/config.yaml"),
+                    args,
+                )
             } catch (_: IllegalArgumentException) {
                 logger.error("No configuration file was found.")
                 logger.error("Usage: data-sources-service <config-file>")
