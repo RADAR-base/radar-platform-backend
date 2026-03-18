@@ -2,10 +2,9 @@ plugins {
     alias(libs.plugins.radar.kotlin) apply false
     alias(libs.plugins.radar.dependency.management)
     alias(libs.plugins.kotlin.serialization) apply false
-    alias(libs.plugins.shadow) apply false
 }
 
-val projectVersion = libs.versions.project.get()
+val projectVersion: String = libs.versions.project.get()
 
 val rootImplDeps = listOf(
     libs.jersey.grizzly,
@@ -33,7 +32,6 @@ allprojects {
 
 subprojects {
     apply(plugin = "org.radarbase.radar-kotlin")
-    apply(plugin = "com.github.johnrengelman.shadow")
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
 
     repositories {
