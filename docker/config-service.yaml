@@ -1,0 +1,34 @@
+server:
+  baseUri: "http://0.0.0.0:8083"
+
+logging:
+  level: "INFO"
+  file: "logs/config-service.log"
+  pattern: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+providers:
+  github:
+    enabled: true
+    baseUrl: "https://raw.githubusercontent.com/RADAR-base/study-definitions/main"
+    owner: "RADAR-base"
+    repo: "study-definitions"
+    branch: "main"
+    token: ""
+    questionnaireRepoOwner: "RADAR-base"
+    questionnaireRepo: "RADAR-REDCap-aRMT-Definitions"
+    questionnaireRepoBranch: "master"
+    protocolRepoOwner: "RADAR-base"
+    protocolRepo: "RADAR-aRMT-protocols"
+    protocolRepoBranch: "master"
+    enrolmentRepoOwner: "RADAR-base"
+    enrolmentRepo: "radar-self-enrolment-definitions"
+    enrolmentRepoBranch: "main"
+  appConfig:
+    enabled: false
+    basePath: "/etc/RADAR-base/study-config"
+  db:
+    enabled: false
+    jdbcUrl: ""
+    username: ""
+    password: ""
+  order: [ "github", "appConfig", "db" ]

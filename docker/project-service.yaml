@@ -1,0 +1,29 @@
+serviceAuth:
+  clientId: platform_backend
+  clientSecret: secret
+  tokenEndpoint: http://hydra-public:4444/oauth2/token
+  scope: SOURCEDATA.CREATE SOURCETYPE.UPDATE SOURCETYPE.DELETE AUTHORITY.UPDATE MEASUREMENT.DELETE PROJECT.READ AUDIT.CREATE USER.DELETE AUTHORITY.DELETE SUBJECT.DELETE MEASUREMENT.UPDATE SOURCEDATA.UPDATE SUBJECT.READ USER.UPDATE SOURCETYPE.CREATE AUTHORITY.READ USER.CREATE SOURCE.CREATE SOURCE.READ SUBJECT.CREATE ROLE.UPDATE ROLE.READ MEASUREMENT.READ PROJECT.UPDATE PROJECT.DELETE ROLE.DELETE SOURCE.DELETE SOURCETYPE.READ ROLE.CREATE SOURCEDATA.DELETE SUBJECT.UPDATE SOURCE.UPDATE PROJECT.CREATE AUDIT.READ MEASUREMENT.CREATE AUDIT.DELETE AUDIT.UPDATE AUTHORITY.CREATE USER.READ SOURCEDATA.READ
+  audience: res_ManagementPortal
+
+radar:
+  baseUrl: "http://management-portal:8080/managementportal/api"
+  timeout: 30000
+  maxRetries: 3
+  auth:
+    enabled: true
+    tokenHeader: "Authorization"
+    tokenPrefix: "Bearer"
+
+server:
+  port: 8082
+  host: "0.0.0.0"
+  cors:
+    enabled: true
+    allowedOrigins: [ "*" ]
+    allowedMethods: [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+    allowedHeaders: [ "Authorization", "Content-Type" ]
+
+logging:
+  level: "INFO"
+  file: "logs/project-service.log"
+  format: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
