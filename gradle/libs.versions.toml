@@ -60,4 +60,3 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 radar-kotlin = { id = "org.radarbase.radar-kotlin", version.ref = "radar-commons-gradle" }
 radar-dependency-management = { id = "org.radarbase.radar-dependency-management", version.ref = "radar-commons-gradle" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
