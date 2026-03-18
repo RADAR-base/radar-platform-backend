@@ -2,6 +2,9 @@
 # The auth setup for the delegate API requires the Management Portal, Kratos,
 # and other supporting services, which will be added once local end-to-end
 # testing of the microservices with real Kratos and MP deployment is underway.
+# Also the docker compose setup is using volumes to mount config files,
+# this needs to be updated to environment variables, but that needs work on
+# config file first and using the radar jersey helper methods in code, then it will be updated in docker
 
 networks:
   public:
