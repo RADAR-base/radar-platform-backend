@@ -1,0 +1,85 @@
+# This docker-compose is a work in progress.
+# The auth setup for the delegate API requires the Management Portal, Kratos,
+# and other supporting services, which will be added once local end-to-end
+# testing of the microservices with real Kratos and MP deployment is underway.
+
+networks:
+  public:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true
+
+services:
+  #---------------------------------------------------------------------------#
+  # Delegate API (Gateway)                                                    #
+  #---------------------------------------------------------------------------#
+  delegate-api:
+    build:
+      context: .
+      dockerfile: delegate-api/Dockerfile
+    image: radarbase/radar-platform-delegate-api:SNAPSHOT
+    ports:
+      - "8080:8080"
+    networks:
+      - public
+      - backend
+    depends_on:
+      - user-service
+      - project-service
+      - config-service
+      - data-sources-service
+    volumes:
+      - ./docker/delegate-api.yaml:/etc/delegate-api/config.yaml
+
+  #---------------------------------------------------------------------------#
+  # User Service                                                              #
+  #---------------------------------------------------------------------------#
+  user-service:
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    image: radarbase/radar-platform-user-service:SNAPSHOT
+    networks:
+      - backend
+    volumes:
+      - ./docker/user-service.yaml:/etc/user-service/config.yaml
+
+  #---------------------------------------------------------------------------#
+  # Project Service                                                           #
+  #---------------------------------------------------------------------------#
+  project-service:
+    build:
+      context: .
+      dockerfile: project-service/Dockerfile
+    image: radarbase/radar-platform-project-service:SNAPSHOT
+    networks:
+      - backend
+    volumes:
+      - ./docker/project-service.yaml:/etc/project-service/config.yaml
+
+  #---------------------------------------------------------------------------#
+  # Config Service                                                            #
+  #---------------------------------------------------------------------------#
+  config-service:
+    build:
+      context: .
+      dockerfile: config-service/Dockerfile
+    image: radarbase/radar-platform-config-service:SNAPSHOT
+    networks:
+      - backend
+    volumes:
+      - ./docker/config-service.yaml:/etc/config-service/config.yaml
+
+  #---------------------------------------------------------------------------#
+  # Data Sources Service                                                      #
+  #---------------------------------------------------------------------------#
+  data-sources-service:
+    build:
+      context: .
+      dockerfile: data-sources-service/Dockerfile
+    image: radarbase/radar-platform-data-sources-service:SNAPSHOT
+    networks:
+      - backend
+    volumes:
+      - ./docker/data-sources-service.yaml:/etc/data-sources-service/config.yaml
