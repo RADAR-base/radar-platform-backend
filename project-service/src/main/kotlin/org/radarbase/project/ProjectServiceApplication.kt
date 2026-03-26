@@ -16,7 +16,10 @@ class ProjectServiceApplication {
         @JvmStatic
         fun main(args: Array<String>) {
             val config = try {
-                ConfigLoader.loadConfig<ProjectServiceConfiguration>("config.yaml", args)
+                ConfigLoader.loadConfig<ProjectServiceConfiguration>(
+                    listOf("project-service/src/main/resources/config.yaml", "/etc/project-service/config.yaml"),
+                    args,
+                )
             } catch (_: IllegalArgumentException) {
                 logger.error("No configuration file was found.")
                 logger.error("Usage: project-service <config-file>")

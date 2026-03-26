@@ -1,0 +1,162 @@
+server:
+  baseUri: "http://0.0.0.0:8084"
+  isJmxEnabled: true
+
+logging:
+  level: "INFO"
+  file: "logs/data-sources-service.log"
+  pattern: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+serviceAuth:
+  clientId: platform_backend
+  clientSecret: secret
+  tokenEndpoint: http://hydra-public:4444/oauth2/token
+  audience: "res_ManagementPortal res_restAuthorizer"
+  scope: SOURCEDATA.CREATE SOURCETYPE.UPDATE SOURCETYPE.DELETE AUTHORITY.UPDATE MEASUREMENT.DELETE PROJECT.READ AUDIT.CREATE USER.DELETE AUTHORITY.DELETE SUBJECT.DELETE MEASUREMENT.UPDATE SOURCEDATA.UPDATE SUBJECT.READ USER.UPDATE SOURCETYPE.CREATE AUTHORITY.READ USER.CREATE SOURCE.CREATE SOURCE.READ SUBJECT.CREATE ROLE.UPDATE ROLE.READ MEASUREMENT.READ PROJECT.UPDATE PROJECT.DELETE ROLE.DELETE SOURCE.DELETE SOURCETYPE.READ ROLE.CREATE SOURCEDATA.DELETE SUBJECT.UPDATE SOURCE.UPDATE PROJECT.CREATE AUDIT.READ MEASUREMENT.CREATE AUDIT.DELETE AUDIT.UPDATE AUTHORITY.CREATE USER.READ SOURCEDATA.READ
+
+managementPortal:
+  baseUrl: "http://management-portal:8080/managementportal"
+  timeoutSeconds: 5
+  maxRetries: 3
+
+restSources:
+  baseUrl: "http://rest-sources-backend:8080/rest-sources/backend"
+  timeoutSeconds: 5
+  maxRetries: 3
+
+sources:
+  - id: passive-app
+    name: Passive App (pRMT)
+    category: mobile
+    integration: prmt
+    dataTypes:
+      - accelerometer
+      - battery_level
+      - gyroscope
+      - light_sensor
+      - magnetic_field
+      - step_count
+      - location_gps
+      - phone_calls
+      - sms_messages
+      - sms_unread_count
+      - phone_contacts
+      - bluetooth_devices
+      - bluetooth_device_scanning
+      - app_usage_events
+      - user_interactions
+
+  - id: active-app
+    name: Active App (aRMT)
+    category: mobile
+    integration: armt
+    dataTypes:
+      - questionnaire_responses
+      - speech_task
+
+  - id: healthkit
+    name: HealthKit
+    category: mobile
+    integration: armt
+    dataTypes:
+      - activity
+      - heart_rate
+      - sleep
+      - readiness_score
+
+  - id: oura-ring
+    name: Oura Ring
+    category: wearable
+    integration: rest-connector
+    dataTypes:
+      - activity
+      - heart_rate
+      - sleep
+      - stress_tracking
+      - readiness_score
+      - spo2
+      - temperature
+
+  - id: apple-watch
+    name: Apple Watch (and iPhones)
+    category: wearable
+    integration: armt
+    dataTypes:
+      - activity
+      - heart_rate
+      - sleep
+      - hrv
+      - spo2
+      - temperature
+
+  - id: garmin
+    name: Garmin Devices
+    category: wearable
+    integration: rest-connector
+    dataTypes:
+      - activity
+      - heart_rate
+      - sleep
+      - stress_tracking
+      - vo2_max
+      - body_battery
+      - spo2_night_time_and_on_demand
+      - respiration_rate
+
+  - id: fitbit
+    name: Fitbit Devices
+    category: wearable
+    integration: rest-connector
+    dataTypes:
+      - steps
+      - heart_rate_ppg
+      - hrv_ppg
+      - sleep
+      - temperature
+      - irregular_heart_rate
+
+  - id: polar-vantage-v3
+    name: Polar Vantage V3
+    category: wearable
+    integration: passive-app-prmt
+    dataTypes:
+      - raw_acceleration
+      - steps
+      - heart_rate_ppg
+      - pp_interval_ms
+      - wrist_ecg
+      - blood_volume_pulse_ppg
+      - sleep_stages
+      - temperature
+
+  - id: polar-h10
+    name: Polar H10 Heart Rate Sensor
+    category: sensor
+    integration: passive-app-prmt
+    dataTypes:
+      - raw_acceleration
+      - heart_rate_ppg
+      - rr_interval_ms
+
+  - id: empatica-e4
+    name: Empatica E4
+    category: wearable
+    integration: passive-app-prmt
+    dataTypes:
+      - raw_acceleration
+      - heart_rate_ppg
+      - blood_volume_pulse_ppg
+      - electrodermal_activity
+      - temperature
+
+  - id: iot-sensors
+    name: IoT Sensors
+    category: iot
+    integration: radar-iot
+    dataTypes:
+      - temperature
+      - humidity
+      - motion
+      - light
+      - air_quality
+      - gas_sensors

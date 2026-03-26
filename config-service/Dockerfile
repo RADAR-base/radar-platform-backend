@@ -1,22 +1,31 @@
-FROM eclipse-temurin:17-jdk-jammy as builder
+FROM --platform=$BUILDPLATFORM eclipse-temurin:17-jdk-jammy AS builder
 
 WORKDIR /app
 
-COPY gradle/wrapper/gradle-wrapper.jar gradle/wrapper/
-COPY gradlew .
-RUN chmod +x /app/gradlew
-COPY . .
+COPY gradle/ gradle/
+COPY gradlew build.gradle.kts settings.gradle.kts ./
+COPY core/build.gradle.kts core/
+COPY config-service/build.gradle.kts config-service/
 
-RUN ./gradlew :config-service:shadowJar --no-daemon
+RUN chmod +x gradlew && ./gradlew --no-daemon \
+    :config-service:downloadDependencies \
+    :config-service:copyDependencies \
+    :config-service:startScripts
+
+COPY core/src/ core/src/
+COPY config-service/src/ config-service/src/
+
+RUN ./gradlew --no-daemon :config-service:jar
 
 FROM eclipse-temurin:17-jre-jammy
 
-WORKDIR /app
+COPY --from=builder /app/config-service/build/scripts/* /usr/bin/
+COPY --from=builder /app/config-service/build/third-party/* /usr/lib/
+COPY --from=builder /app/config-service/build/libs/*.jar /usr/lib/
+COPY --from=builder /app/config-service/src/main/resources/config.yaml /etc/config-service/config.yaml
 
-COPY --from=builder /app/config-service/build/libs/*-all.jar /app/app.jar
+USER 101
 
 EXPOSE 8083
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
-
-
+ENTRYPOINT ["config-service"]
