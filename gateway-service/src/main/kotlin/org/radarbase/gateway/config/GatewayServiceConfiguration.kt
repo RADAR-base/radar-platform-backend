@@ -8,14 +8,14 @@ import org.radarbase.jersey.enhancer.EnhancerFactory
 
 @Singleton
 data class GatewayServiceConfiguration(
-    val gateway: GatewayConfiguration,
-    val server: ServerConfiguration,
-    val logging: LoggingConfig,
+    val gateway: GatewayConfig = GatewayConfig(),
+    val server: ServerConfiguration = ServerConfiguration(),
+    val logging: LoggingConfig = LoggingConfig(),
     val serviceAuth: ServiceAuthConfig = ServiceAuthConfig(),
 ) {
     val resourceConfig: Class<out EnhancerFactory> = GatewayJwtEnhancerFactory::class.java
 
     fun validate() {
-        // Add validation logic if needed
+        check(gateway.baseUrl.isNotBlank()) { "gateway.baseUrl must not be blank" }
     }
 }
