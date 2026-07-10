@@ -1,0 +1,29 @@
+serviceAuth:
+  clientId: platform_backend
+  clientSecret: secret
+  tokenEndpoint: http://hydra-public:4444/oauth2/token
+  scope: MEASUREMENT.CREATE MEASUREMENT.READ SUBJECT.READ PROJECT.READ
+  audience: res_gateway
+
+gateway:
+  baseUrl: "http://radar-gateway:8090/radar-gateway"
+  timeout: 30
+  maxRetries: 3
+  auth:
+    enabled: true
+    tokenHeader: "Authorization"
+    tokenPrefix: "Bearer"
+
+server:
+  port: 8085
+  host: "0.0.0.0"
+  cors:
+    enabled: true
+    allowedOrigins: [ "*" ]
+    allowedMethods: [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+    allowedHeaders: [ "Authorization", "Content-Type" ]
+
+logging:
+  level: "INFO"
+  file: "logs/gateway-service.log"
+  pattern: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
