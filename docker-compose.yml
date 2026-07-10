@@ -32,6 +32,7 @@ services:
       - project-service
       - config-service
       - data-sources-service
+      - gateway-service
     volumes:
       - ./docker/delegate-api.yaml:/etc/delegate-api/config.yaml
 
@@ -86,3 +87,16 @@ services:
       - backend
     volumes:
       - ./docker/data-sources-service.yaml:/etc/data-sources-service/config.yaml
+
+  #---------------------------------------------------------------------------#
+  # Gateway Service                                                           #
+  #---------------------------------------------------------------------------#
+  gateway-service:
+    build:
+      context: .
+      dockerfile: gateway-service/Dockerfile
+    image: radarbase/radar-platform-gateway-service:SNAPSHOT
+    networks:
+      - backend
+    volumes:
+      - ./docker/gateway-service.yaml:/etc/gateway-service/config.yaml
