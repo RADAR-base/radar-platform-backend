@@ -23,10 +23,6 @@ import org.slf4j.LoggerFactory
 import java.io.InputStream
 import kotlin.time.Duration.Companion.seconds
 
-/**
- * Reverse proxy in front of the RADAR-Gateway. Forwards Kafka topic and file-upload requests,
- * relaying the upstream status, content type and body bytes unchanged.
- */
 @Path("/gateway-service")
 @Singleton
 class GatewayResource
@@ -100,10 +96,6 @@ constructor(
         }
     }
 
-    /**
-     * Runs [block] on the coroutine dispatcher and relays the resulting [GatewayProxyResponse] as a
-     * JAX-RS response. Any unexpected failure is returned as a 500 with a plain-text message.
-     */
     private fun runProxy(
         asyncResponse: AsyncResponse,
         action: String,

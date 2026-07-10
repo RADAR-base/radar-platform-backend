@@ -35,17 +35,14 @@ class GatewayResourceEnhancer(
     )
 
     override fun AbstractBinder.enhance() {
-        // Bind configuration
         bind(config)
             .to(GatewayServiceConfiguration::class.java)
             .`in`(Singleton::class.java)
 
-        // Bind services
         bind(GatewayServiceImpl::class.java)
             .to(GatewayService::class.java)
             .`in`(Singleton::class.java)
 
-        // Bind clients
         bind(RadarGatewayClient::class.java)
             .to(RadarGatewayClient::class.java)
             .`in`(Singleton::class.java)

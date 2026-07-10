@@ -22,13 +22,6 @@ import org.radarbase.gateway.config.GatewayServiceConfiguration
 import org.radarbase.gateway.model.GatewayProxyResponse
 import org.slf4j.LoggerFactory
 
-/**
- * Forwards requests to the upstream RADAR-Gateway.
- *
- * Every method resolves an auth token the same way the other proxy services do: if the caller
- * forwards a bearer token it is used as-is, otherwise the service falls back to its own
- * client-credentials token from [ServiceTokenProvider].
- */
 @Singleton
 class RadarGatewayClient @Inject constructor(
     private val serviceTokenProvider: ServiceTokenProvider,
@@ -44,7 +37,6 @@ class RadarGatewayClient @Inject constructor(
         maxRetriesCount = gatewayConfig.maxRetries,
     )
 
-    /** Liveness probe against the upstream gateway. */
     suspend fun checkHealth(): Boolean {
         logger.debug("Checking RADAR-Gateway health")
         return try {
@@ -58,7 +50,6 @@ class RadarGatewayClient @Inject constructor(
         }
     }
 
-    /** List Kafka topics known to the gateway. */
     suspend fun listTopics(authToken: String? = null): GatewayProxyResponse {
         logger.debug("Listing topics from RADAR-Gateway")
         val topicsUrl = "${gatewayConfig.baseUrl}/topics"
@@ -70,7 +61,6 @@ class RadarGatewayClient @Inject constructor(
         }
     }
 
-    /** Fetch metadata for a single topic. */
     suspend fun getTopic(
         topic: String,
         authToken: String? = null,
@@ -85,10 +75,6 @@ class RadarGatewayClient @Inject constructor(
         }
     }
 
-    /**
-     * Produce Avro records to a topic. The [requestContentType] and [body] are forwarded verbatim
-     * so the gateway can validate the JSON/binary Avro payload itself.
-     */
     suspend fun produceToTopic(
         topic: String,
         requestContentType: String?,
@@ -107,10 +93,6 @@ class RadarGatewayClient @Inject constructor(
         }
     }
 
-    /**
-     * Forward a subject file upload as multipart form data, mirroring the gateway's
-     * `/{projectId}/{subjectId}/{topic}/upload` endpoint.
-     */
     suspend fun uploadFile(
         projectId: String,
         subjectId: String,

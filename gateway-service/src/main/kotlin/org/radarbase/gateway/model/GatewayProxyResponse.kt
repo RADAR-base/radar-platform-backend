@@ -2,9 +2,6 @@ package org.radarbase.gateway.model
 
 /**
  * Raw HTTP response captured from the upstream RADAR-Gateway.
- *
- * The gateway handles Avro (JSON and binary) payloads for Kafka data ingestion, so this proxy
- * forwards status codes, content types and body bytes verbatim rather than interpreting them.
  */
 data class GatewayProxyResponse(
     val status: Int,
