@@ -9,19 +9,11 @@ gateway:
   baseUrl: "http://radar-gateway:8090/radar-gateway"
   timeout: 30
   maxRetries: 3
-  auth:
-    enabled: true
-    tokenHeader: "Authorization"
-    tokenPrefix: "Bearer"
 
 server:
-  port: 8085
-  host: "0.0.0.0"
-  cors:
-    enabled: true
-    allowedOrigins: [ "*" ]
-    allowedMethods: [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
-    allowedHeaders: [ "Authorization", "Content-Type" ]
+  baseUri: "http://0.0.0.0:8085"
+  requestTimeout: 30
+  isJmxEnabled: false
 
 logging:
   level: "INFO"
